@@ -1,0 +1,68 @@
+.container{
+    flex: 1;
+    background: linear-gradient(90deg,rgb(30, 37, 40) 0%, rgb(47, 49, 48) 50%, rgb(29, 29, 21) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: ;
+}
+
+
+.loginCardWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.title {
+  color: #fff;
+  font-size: 1rem;
+}
+.title span {
+  font-weight: 600;
+  background: linear-gradient(90deg, #0a84ff 0%, #314fe3 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.sub_heading {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  margin-bottom: 10%;
+}
+.button_confrim {
+  padding: 1.5vh;
+  font-size: var(--font-size-4);
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #0a84ff 0%, #00d9ff 100%);
+  margin-top: 10%;
+  border-radius: 0.3rem;
+}
+.form_label {
+  margin-bottom: 1vh;
+  font-weight: 600;
+  font-size: var(--font-size-5);
+  color: var(--white-50, rgba(255, 255, 255, 0.5));
+}
+.form_group {
+  display: flex;
+  flex-direction: column;
+}
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+}
+.form input {
+  padding: 1.5vh;
+  border-radius: 0.3rem;
+  outline: none;
+  background: rgba(208, 208, 208, 0.5);
+  background-blend-mode: luminosity;
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--white-50, rgba(255, 255, 255, 0.5));
+}
+

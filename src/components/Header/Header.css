@@ -1,0 +1,19 @@
+.header-bg{
+    background-color: #001333 !important;;
+}
+.banner-container {
+  background-color: #e03384;
+}
+
+.banner {
+  animation: slideRightToLeft 20s linear  infinite forwards;
+}
+
+@keyframes slideRightToLeft {
+  0% {
+    transform: translateX(1300px)
+  }
+  100% {
+   transform: translateX(-900px);
+  }
+}

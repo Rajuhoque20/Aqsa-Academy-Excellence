@@ -25,18 +25,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isLogin=true;
+  const isLogin=false;
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {  isLogin?
-    <AuthLayout>{children}</AuthLayout>:<div   className={`flex flex-col h-max overflow-y-auto overflow-x-hidden w-full min-h-screen`} >
+        {isLogin?
+    <AuthLayout>{children}</AuthLayout>
+    :
+    <div className={`flex flex-col h-max overflow-y-auto overflow-x-hidden w-full min-h-screen`}>
          <Header/>
         {children}
         <Footer/>
-        </div>}
+    </div>}
        
       </body>
     </html>

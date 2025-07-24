@@ -11,7 +11,7 @@ export default function LoginPage() {
           Sign in to <span>Aqsa Academy of Excellence</span> <span>!</span>
         </span>
         <small className={classes.sub_heading}>
-          Sign in using your official Email ID.
+          Sign in using your Username.
         </small>
         <form
         action={''}
@@ -35,7 +35,7 @@ export default function LoginPage() {
               name="username"
               id="username"
               required
-              placeholder="Enter User ID"
+              placeholder="Enter Username"
             />
           </div>
 

@@ -8,10 +8,8 @@ export default function AuthLayout({children}:{children:ReactNode}) {
         <Header/>
         <div className='flex flex-1'>
           <Sider/>
-          <div className='w-5/6 bg-gray-800 p-5'> {children}</div>
-          
-        </div>
-       
+          <div className='w-5/6 bg-gray-800 p-5'> {children}</div>         
+        </div>      
     </div>
   )
 }

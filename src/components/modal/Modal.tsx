@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Button } from '../Button';
+import { AiOutlineClose } from "react-icons/ai";
 
 export const Modal = ({
         title="Add User",
@@ -7,31 +8,37 @@ export const Modal = ({
         open,
         onCancel,
         onOk,
+        width,
+        footer=true,
 }:{
         title:string,
         children:ReactNode,
         open:boolean,
           onCancel:()=>void,
         onOk:()=>void,
+        width:string,
+        footer:boolean,
 }) => {
   return (
-    <div className='fixed z-7 border-2 border-red-800 w-screen h-screen left-0 top-0 bottom-0 right-0 flex items-center justify-center'>
-        <div className='max-w-[30vw] max-h-[70vh] bg-gray-300 rounded-sm p-5 flex flex-col'>
-            <div className='flex gap-20 items-center justify-between'>
+    open&&<div className='fixed w-screen h-screen left-0 top-0 bottom-0 right-0 flex items-center justify-center'>
+
+        <div className='max-w-[80vw] max-h-[90vh] bg-gray-300 z-7 rounded-sm p-5 flex flex-col overflow-y-auto' style={{width:width?width:''}}>
+            <div className='flex gap-20 items-center justify-between mb-10'>
                     <span></span>
                     <h1 className='font-bold text-2xl'>{title}</h1>
-                    <span className='cursor-pointer' onClick={()=>{
+                    <AiOutlineClose size={28} color="black" className='cursor-pointer' onClick={()=>{
                         onCancel();
-                    }}>Close</span>
+                    }}/>                 
             </div>
-            <section>          
+            <section className='flex flex-col'>          
                 {children}
             </section>
-            <section>
-                <Button title='Okk' onClick={()=>{console.log("asdf")}} type='primary'/>
-                
-            </section>
+            {footer&&<section className='flex justify-end gap-5 mt-10'>
+                <Button title='Confirm' onClick={onOk} type='primary'/>
+                <Button title='Cancel' onClick={onCancel} type='secondary'/>
+            </section>}
         </div>
+        <div className='absolute inset-0 bg-black/30 backdrop-blur-[2px]' onClick={onCancel}></div>
     </div>
   )
 }

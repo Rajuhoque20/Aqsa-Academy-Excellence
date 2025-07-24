@@ -1,0 +1,12 @@
+.location{
+   clip-path: path("M30 0 L300 0 L330 100 L0 100Z");
+   background: rgba(108, 66, 213, 0.2);
+   width: 330px;
+   height: 100px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   backdrop-filter: blur(10px);
+   box-shadow: 2px 10px 15px rgba(227, 223, 223, 0.8);
+    
+}

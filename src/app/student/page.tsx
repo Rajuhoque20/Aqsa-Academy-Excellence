@@ -2,10 +2,16 @@
 import React, { useState } from 'react'
 import { Modal } from 'src/components/modal/Modal';
 import { SearchInput } from 'src/components/SearchInput';
+import { AddStudentModal } from './AddStudent';
+import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
+import { DeleteStudent } from './DeleteStudent';
 
 const columns=["Name", "Reg No","Gender", "Class", "Roll No", "Monthly Fees", "Reg Fees", "Due Fees","Document", "Action",];
 
 export default function Student() {
+  const [open, setOpen]=useState<boolean>(false);
+  const [isEdit, setIsEdit]=useState(false);
+  const [isDelete, setIsDelete]=useState(false);
   const studentsData=[
     {
       id:1,registrationNo:"123456", name:"Pinki",gender:"Male",  class:"I", rollno:"12", monthlyFees:"1000", registrationFees:"5000", dueFees:"3000", document:"View Docs"
@@ -29,7 +35,7 @@ export default function Student() {
          <h1 className='text-2xl font-semibold text-white'>Student</h1>
          <div className='flex items-center gap-5'>
               <SearchInput/>
-              <AddButton/>
+               <AddButton onClick={()=>setOpen(true)}/>                     
          </div>
       </div>
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -52,50 +58,21 @@ export default function Student() {
                 <td className="px-6 py-4">{item.dueFees}</td>
                 <td className="px-6 py-4">{item.document}</td>
                 <td className="px-6 py-4 flex items-center gap-2">
-                  <EditButton/>
-                  <DeleteButton/>
+                  <EditButton onClick={()=>setIsEdit(true)}/>
+                  <DeleteButton onClick={()=>setIsDelete(true)}/>
                 </td>
               </tr>
             )
           })}
         </tbody>
       </table>
-     <AddStudentModal/>
+       <AddStudentModal open={open} type={"add"} setOpen={setOpen}/>
+       <AddStudentModal open={isEdit} type='edit' setOpen={setIsEdit}/>
+       <DeleteStudent open={isDelete} setOpen={setIsDelete}/>
     </div>
   )
 }
 
-const EditButton=()=>{
-  return(
-    <button className='px-3 py-1 bg-green-600 rounded-md text-white cursor-pointer'>Edit</button>
-  )
-}
-const DeleteButton=()=>{
-  return(
-    <button className='px-3 py-1 bg-red-600 rounded-md text-white cursor-pointer'>Delete</button>
-  )
-}
-const AddButton=()=>{
-  return(
-    <button className='px-5 py-2 bg-blue-600 rounded-md text-white cursor-pointer'>Add Student</button>
-  )
-}
 
 
 
-export const AddStudentModal=()=>{
-  const [open, setOpen]=useState(false);
-  return(
-     <Modal
-      title={"Add Student"}
-      open={open}
-      onCancel={()=>{setOpen(false)}}
-      onOk={()=>{
-        console.log("sdfg")
-      }}
-      >
-       <form>
-        </form> 
-      </Modal>
-  )
-}

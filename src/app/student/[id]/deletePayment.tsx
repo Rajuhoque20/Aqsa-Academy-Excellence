@@ -8,7 +8,7 @@ type Props={
     deleteParam:{name:string, id:string},
     getStudents:()=>void,
 }
-export const DeleteStudent=(
+export const DeletePayment=(
     {
         open,
         setOpen,
@@ -18,7 +18,7 @@ export const DeleteStudent=(
 
 )=>{
     const deleteHandler=()=>{
-        axios.delete(`/api/students?id=${deleteParam.id}`)  
+        axios.delete(`/api/studentPayment?id=${deleteParam.id}`)  
                 .then(res=>{
                     if(res){
                          getStudents();
@@ -32,7 +32,7 @@ export const DeleteStudent=(
     return(
          <Modal
              width='40vw'
-              title={'Delete Student'}
+              title={'Delete Payment'}
               open={open}
               onCancel={()=>{setOpen(false)}}
               onOk={()=>{
@@ -40,7 +40,7 @@ export const DeleteStudent=(
               }}
               footer={true}
               >
-                <span className="text-center">Are you sure, you want to delete the student, <b>{deleteParam?.name}</b>?</span>
+                <span className="text-center text-gray-800">Are you sure, you want to delete the payment for, <b>{deleteParam?.name}</b>?</span>
               </Modal>
     )
 }

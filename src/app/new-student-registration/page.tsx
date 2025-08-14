@@ -1,4 +1,13 @@
- const NewStudentRegistration=()=>{
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+
+
+ const NewStudentRegistration=async()=>{
+    const session=await getServerSession(authOptions);
+      if(session){
+        redirect('/student');
+      }
     return(
         <div className="flex flex-col gap-10 py-30 px-50">
             <h1 className="text-black text-5xl ">Registration</h1>

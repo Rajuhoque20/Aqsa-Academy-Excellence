@@ -25,7 +25,7 @@ export const Modal = ({
         <div className='max-w-[80vw] max-h-[90vh] bg-gray-300 z-7 rounded-sm p-5 flex flex-col overflow-y-auto' style={{width:width?width:''}}>
             <div className='flex gap-20 items-center justify-between mb-10'>
                     <span></span>
-                    <h1 className='font-bold text-2xl'>{title}</h1>
+                    <h1 className='font-bold text-2xl text-black'>{title}</h1>
                     <AiOutlineClose size={28} color="black" className='cursor-pointer' onClick={()=>{
                         onCancel();
                     }}/>                 

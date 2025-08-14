@@ -1,43 +1,54 @@
 'use client'
-import React, { useState } from 'react'
-import { Modal } from 'src/components/modal/Modal';
+import React, { useEffect, useState } from 'react'
 import { SearchInput } from 'src/components/SearchInput';
 import { AddStudentModal } from './AddStudent';
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 import { DeleteStudent } from './DeleteStudent';
+import axios from 'axios';
+import { useRouter } from "next/navigation";
 
-const columns=["Name", "Reg No","Gender", "Class", "Roll No", "Monthly Fees", "Reg Fees", "Due Fees","Document", "Action",];
+const columns=["Name","Gender", "Class", "Reg No","Roll No", "Monthly Fees", "Reg Fees", "Due Fees","Action",];
 
 export default function Student() {
   const [open, setOpen]=useState<boolean>(false);
+  const [studentsData, setStudentsData]=useState([]);
   const [isEdit, setIsEdit]=useState(false);
   const [isDelete, setIsDelete]=useState(false);
-  const studentsData=[
-    {
-      id:1,registrationNo:"123456", name:"Pinki",gender:"Male",  class:"I", rollno:"12", monthlyFees:"1000", registrationFees:"5000", dueFees:"3000", document:"View Docs"
-    },
-     {
-      id:2,registrationNo:"123456", name:"Pinki",gender:"Male", class:"I", rollno:"12", monthlyFees:"1000", registrationFees:"5000", dueFees:"3000",document:"View Docs"
-    },
-     {
-      id:3,registrationNo:"123456", name:"Pinki", gender:"Male", class:"I", rollno:"12", monthlyFees:"1000", registrationFees:"5000", dueFees:"3000",document:"View Docs"
-    }
-    ,
-     {
-      id:4,registrationNo:"123456", name:"Pinki", gender:"Male", class:"I", rollno:"12",  monthlyFees:"1000", registrationFees:"5000",dueFees:"3000",document:"View Docs"
-    }
-  ]
+  const [deleteParam, setDeleteParam]=useState({name:'', id:''});
+  const [editParam, setEditParam]=useState();
+  const [searchKey, setSearchKey]=useState('');
+  console.log("searchKey",searchKey);
+  const router=useRouter();
 
-  
+  const getStudents=()=>{
+     axios.get('/api/students')
+    .then(res=>{
+      if(res){
+        console.log("Reeeesss",res)
+        setStudentsData(res?.data);
+      }
+    })
+    .catch(error=>{
+      console.log(error)
+    })
+  }
+
+  useEffect(()=>{
+   getStudents();
+  },[]);
+
+  const searchData=!searchKey?studentsData:studentsData?.filter((item:any)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+
   return (
     <div className='w-full flex text-black flex-col gap-2' >
       <div className='flex items-center justify-between'>
-         <h1 className='text-2xl font-semibold text-white'>Student</h1>
+         <h1 className='text-2xl font-semibold text-white'>Students</h1>
          <div className='flex items-center gap-5'>
-              <SearchInput/>
+              <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
                <AddButton onClick={()=>setOpen(true)}/>                     
          </div>
       </div>
+      
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -45,30 +56,38 @@ export default function Student() {
           </tr>
         </thead>
         <tbody>
-          {studentsData?.map((item)=>{
+          {searchData?.map((item:any)=>{
             return(
-              <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                <td className="px-6 py-4">{item.name}</td>
-                <td className="px-6 py-4">{item.registrationNo}</td>
+              <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                <td className="px-6 py-4 cursor-pointer" onClick={()=>{
+                   router.push(`/student/${item._id}`);
+                }}>{item.name}</td>
                 <td className="px-6 py-4">{item.gender}</td>
-                <td className="px-6 py-4">{item.class}</td>
+                  <td className="px-6 py-4">{item.current_class}</td>
+                <td className="px-6 py-4">{item.regno}</td>
                 <td className="px-6 py-4">{item.rollno}</td>
-                <td className="px-6 py-4">{item.monthlyFees}</td>
-                 <td className="px-6 py-4">{item.registrationFees}</td>
+              
+                <td className="px-6 py-4">{item.monthly_fees}</td>
+                 <td className="px-6 py-4">{item.registration_fees}</td>
                 <td className="px-6 py-4">{item.dueFees}</td>
-                <td className="px-6 py-4">{item.document}</td>
                 <td className="px-6 py-4 flex items-center gap-2">
-                  <EditButton onClick={()=>setIsEdit(true)}/>
-                  <DeleteButton onClick={()=>setIsDelete(true)}/>
+                  <EditButton onClick={()=>{setIsEdit(true);
+                    setEditParam(item);
+                  }}/>
+                  <DeleteButton onClick={()=>{
+                    setIsDelete(true);
+                    setDeleteParam({name:item?.name, id:item?._id});
+
+                  }}/>
                 </td>
               </tr>
             )
           })}
         </tbody>
       </table>
-       <AddStudentModal open={open} type={"add"} setOpen={setOpen}/>
-       <AddStudentModal open={isEdit} type='edit' setOpen={setIsEdit}/>
-       <DeleteStudent open={isDelete} setOpen={setIsDelete}/>
+       <AddStudentModal open={open} type={"add"} setOpen={setOpen} getStudents={getStudents} editParam={{}}/>
+       <AddStudentModal open={isEdit} type='edit' setOpen={setIsEdit} getStudents={getStudents} editParam={editParam}/>
+       <DeleteStudent open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getStudents={getStudents}/>
     </div>
   )
 }

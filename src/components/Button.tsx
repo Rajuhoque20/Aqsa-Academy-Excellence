@@ -13,9 +13,9 @@ export const DeleteButton=({onClick}:{onClick:()=>void})=>{
     <button onClick={onClick} className='px-3 py-1 bg-red-600 rounded-md text-white cursor-pointer'>Delete</button>
   )
 }
-export const AddButton=({onClick}:{onClick:()=>void})=>{
+export const AddButton=({onClick, title}:{onClick:()=>void, title:string})=>{
   return(
-    <button onClick={onClick} className='px-5 py-2 bg-blue-600 rounded-md text-white cursor-pointer'>Add Student</button>
+    <button onClick={onClick} className='px-5 py-2 bg-blue-600 rounded-md text-white cursor-pointer'>{title?title:'Add Student'}</button>
   )
 }
 export const Button=({onClick, title, type="primary"}:{onClick:()=>void, title:string, type?:string})=>{

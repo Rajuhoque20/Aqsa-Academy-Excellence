@@ -1,9 +1,10 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "src/components/Header/Header";
-import Footer from "src/components/Footer/Footer";
-import AuthLayout from "src/components/AuthContent/AuthLayout";
+import { LayoutContent } from "./layoutContent";
+import { AuthProvider } from "./Providers";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,21 +26,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isLogin=false;
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {isLogin?
-    <AuthLayout>{children}</AuthLayout>
-    :
-    <div className={`flex flex-col h-max overflow-y-auto overflow-x-hidden w-full min-h-screen`}>
-         <Header/>
-        {children}
-        <Footer/>
-    </div>}
-       
+        <AuthProvider>
+            <LayoutContent element={children}/>
+       </AuthProvider>
       </body>
     </html>
   );

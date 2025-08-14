@@ -1,0 +1,60 @@
+import mongoose, { model, models } from "mongoose";
+
+const studentSchema=new mongoose.Schema({
+    name:{
+        type:String,
+        required:true,
+    },
+    regno:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    rollno:{
+        type:String,
+        required:true,
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    current_class:{
+        type:String,
+        required:true,
+    },
+    registration_fees:{
+        type:String,
+        required:true,
+    },
+    monthly_fees:{
+        type:String,
+        required:true,
+    },
+    address:{
+        type:String,
+        required:true,
+    },
+    phone:{
+        type:String,
+        required:true,
+    },
+    gender:{
+        type:String,
+        required:true,
+    },
+    father_name:{
+        type:String,
+    },
+    mother_name:{
+        type:String,
+    },
+    marksheet:{
+        type:String,
+    }
+},
+{
+    timestamps:true
+})
+const Students=models.Student||model('Student', studentSchema);
+export default Students;

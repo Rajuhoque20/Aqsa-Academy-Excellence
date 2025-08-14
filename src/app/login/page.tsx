@@ -1,9 +1,12 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import classes from './style.module.css';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 export default function LoginPage() {
+  const [error, setError]=useState('')
     const router=useRouter();
+   
   return (
     <div className={classes.container}>
          <section className={classes.loginCardWrapper}>
@@ -15,13 +18,45 @@ export default function LoginPage() {
         </small>
         <form
         action={''}
-          onSubmit={(e) => {
+          onSubmit={async(e) => {
             e.preventDefault();
             const form = e.target.elements;
             const username = form.username.value;
             const password = form.password.value;
             const params = { username, password };
-            router.push("/dashboard");
+            try{
+              const res=await signIn('credentials',{
+                ...params,
+                redirect:false,
+              });
+              if(res?.error){
+                setError('Invalid crendetails');
+                return;
+              }
+               router.push("/student");
+
+            }
+            catch(error){
+              console.log(error)
+            }
+            // const handleLogin=async()=>{
+            //   await axios.post('api/login',params)
+            //   .then(res=>{
+            //     if(res){
+            //       console.log("responsse",res);
+            //        router.push("/student");
+            //        localStorage.setItem('login','yes');
+            //        setIsLogin(true);
+            //     }
+
+            //   })
+            //   .catch(error=>{
+            //     console.log("errror",error)
+            //   })
+
+            // }
+            // handleLogin();
+           
 
           }}
           className={classes.form}
@@ -51,7 +86,7 @@ export default function LoginPage() {
               placeholder="Enter password"
             />
           </div>
-
+          {error&&<p className='color-red-600 my-5'>{error}</p>}
           <button type="submit" className={classes.button_confrim}>
             CONFIRM
           </button>

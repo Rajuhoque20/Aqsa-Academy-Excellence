@@ -7,15 +7,15 @@ type Props={
     open:boolean,
     type:string,
     setOpen:Dispatch<SetStateAction<boolean>>,
-    getStudents:()=>void,
+    getTeachers:()=>void,
     editParam:any,
 }
 
-export const AddStudentModal=({
+export const AddTeacherModal=({
     open,
     type,
     setOpen,
-    getStudents,
+    getTeachers,
     editParam
 }:Props
 )=>{
@@ -23,13 +23,12 @@ export const AddStudentModal=({
         e.preventDefault();
         const form=e.currentTarget;
         const formData=new FormData(form);
-        // const data = Object.fromEntries(formData.entries());
-        console.log("formData",formData);
+         const data =  Object.fromEntries(formData.entries());; 
         if(type==='add'){
-             await axios.post('/api/students',formData)
+             await axios.post('/api/teacher',data)
         .then(res=>{
             if(res){
-                getStudents();
+                getTeachers();
                 setOpen(false)
             }
         })
@@ -37,26 +36,24 @@ export const AddStudentModal=({
             console.log(err)
         })
         }
-        else{
-           
-            await axios.patch(`/api/students?id=${editParam?._id}`,formData)
+        else{         
+            await axios.patch(`/api/teacher?id=${editParam?._id}`,data)
         .then(res=>{
             if(res){
-                getStudents();
+                getTeachers();
                 setOpen(false)
             }
         })
         .catch(err=>{
             console.log(err)
         })
-        }
-        
+        }       
     }
   return(
     <>
      <Modal
       width='40vw'
-      title={type==='edit'?'Edit Student':"Add Student"}
+      title={type==='edit'?'Edit Teacher':"Add Teacher"}
       open={open}
       onCancel={()=>{setOpen(false)}}
       onOk={()=>{
@@ -64,10 +61,8 @@ export const AddStudentModal=({
       }}
       footer={false}
       >
-       <div className="flex flex-col gap-10 ">
-            <form className="flex flex-col gap-8" onSubmit={handleSubmit}
-            encType="multipart/form-data"
-            
+       <div className="flex flex-col gap-10">
+            <form className="flex flex-col gap-8" onSubmit={handleSubmit}        
             >
                 <div className="flex flex-col gap-3">
                     <label className="text-gray-700" htmlFor="name">Name</label>
@@ -98,35 +93,12 @@ export const AddStudentModal=({
                     </select>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="current_class">Class (Current)</label>
-                    <input required name="current_class"
-                     defaultValue={type === 'edit' ? editParam?.current_class : ''}
-                     type="text" placeholder="Enter V,VII, XI etc" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
-                </div>
-                <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="monthly_fees">Monthly Fees</label>
-                    <input required name="monthly_fees"
-                    defaultValue={type === 'edit' ? editParam?.monthly_fees : ''}
+                    <label className="text-gray-700" htmlFor="monthly_fees">Monthly Salary</label>
+                    <input required name="monthly_salary"
+                    defaultValue={type === 'edit' ? editParam?.monthly_salary : ''}
                      type="text" placeholder="Enter Monthly Fees" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
-                </div>
-                <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="registration_fees">Registration Fees</label>
-                    <input required name="registration_fees" 
-                     defaultValue={type === 'edit' ? editParam?.registration_fees : ''}
-                    type="text" placeholder="Enter Registration Fees" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
-                </div>
-                <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="father_name">Father's Name</label>
-                    <input
-                    defaultValue={type === 'edit' ? editParam?.father_name : ''}
-                     required name="father_name" type="text" placeholder="Enter father's name" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
-                </div>
-                <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="mother_name">Mother's Name</label>
-                    <input required name="mother_name"
-                    defaultValue={type === 'edit' ? editParam?.mother_name : ''}
-                     type="text" placeholder="Enter mother's name" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
-                </div>
+                </div>              
+              
                 <div className="flex flex-col gap-3">
                     <label className="text-gray-700" htmlFor="address">Address</label>
                     <input
@@ -134,12 +106,6 @@ export const AddStudentModal=({
                      required name="address" type="text" placeholder="Enter address" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
                 </div>
                 
-                <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="marksheet">Uplaod Marksheet</label>
-                    <input name="marksheet" 
-                    // defaultValue={type === 'edit' ? editParam?.marksheet : ''}
-                     accept=".pdf,.jpg,.jpeg,.png" type="file" placeholder="Enter name" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
-                </div>
                 <div className="flex justify-center gap-5 item-center">
                     <button className="bg-blue-600 px-5 py-2 text-white transition hover:scale-105 cursor-pointer rounded-md">{type==='edit'?'Save':'Submit'}</button>
                     <Button type="secondary" title="Cancel" onClick={()=>setOpen(false)}/>

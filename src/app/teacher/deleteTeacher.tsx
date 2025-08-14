@@ -6,22 +6,22 @@ type Props={
     open:boolean,
     setOpen:Dispatch<SetStateAction<boolean>>,
     deleteParam:{name:string, id:string},
-    getStudents:()=>void,
+    getTeachers:()=>void,
 }
-export const DeleteStudent=(
+export const DeleteTeacher=(
     {
         open,
         setOpen,
         deleteParam,
-        getStudents,
+        getTeachers,
     }:Props
 
 )=>{
     const deleteHandler=()=>{
-        axios.delete(`/api/students?id=${deleteParam.id}`)  
+        axios.delete(`/api/teacher?id=${deleteParam.id}`)  
                 .then(res=>{
                     if(res){
-                         getStudents();
+                         getTeachers();
                          setOpen(false);
                     }
                 })
@@ -32,7 +32,7 @@ export const DeleteStudent=(
     return(
          <Modal
              width='40vw'
-              title={'Delete Student'}
+              title={'Delete Teacher'}
               open={open}
               onCancel={()=>{setOpen(false)}}
               onOk={()=>{
@@ -40,7 +40,7 @@ export const DeleteStudent=(
               }}
               footer={true}
               >
-                <span className="text-center">Are you sure, you want to delete the student, <b>{deleteParam?.name}</b>?</span>
+                <span className="text-center">Are you sure, you want to delete the Teacher, <b>{deleteParam?.name}</b>?</span>
               </Modal>
     )
 }

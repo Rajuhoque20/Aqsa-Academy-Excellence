@@ -17,7 +17,7 @@ export default function Student() {
   const [deleteParam, setDeleteParam]=useState({name:'', id:''});
   const [editParam, setEditParam]=useState();
   const [searchKey, setSearchKey]=useState('');
-  console.log("searchKey",searchKey);
+ 
   const router=useRouter();
 
   const getStudents=()=>{
@@ -45,7 +45,7 @@ export default function Student() {
          <h1 className='text-2xl font-semibold text-white'>Students</h1>
          <div className='flex items-center gap-5'>
               <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
-               <AddButton onClick={()=>setOpen(true)}/>                     
+               <AddButton onClick={()=>setOpen(true)} title='Add Student'/>                     
          </div>
       </div>
       

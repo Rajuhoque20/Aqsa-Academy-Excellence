@@ -18,9 +18,10 @@ export const AddButton=({onClick, title}:{onClick:()=>void, title:string})=>{
     <button onClick={onClick} className='px-5 py-2 bg-blue-600 rounded-md text-white cursor-pointer'>{title?title:'Add Student'}</button>
   )
 }
-export const Button=({onClick, title, type="primary"}:{onClick:()=>void, title:string, type?:string})=>{
+export const Button=({onClick, title, type="primary", disabled}:{onClick:()=>void, title:string, type?:string, disabled?:boolean})=>{
     return(<button
     onClick={onClick}
+    disabled={disabled}
      className={`px-5 py-2 ${type==='secondary'?'bg-gray-200 text-blue-600 border-1 border-blue-600':'bg-blue-600 text-white'} rounded-md cursor-pointer transition hover:scale-105`}
      >{title}</button>
     )

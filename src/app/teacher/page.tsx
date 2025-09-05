@@ -60,7 +60,7 @@ export default function Teacher() {
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                 <td className="px-6 py-4 cursor-pointer" onClick={()=>{
-                   router.push(`/student/${item._id}`);
+                   router.push(`/teacher/${item._id}`);
                 }}>{item.name}</td>
                 <td className="px-6 py-4">{item.gender}</td>
                   <td className="px-6 py-4">{item.email}</td>

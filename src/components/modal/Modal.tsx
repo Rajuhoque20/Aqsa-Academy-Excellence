@@ -2,6 +2,18 @@ import React, { ReactNode } from 'react'
 import { Button } from '../Button';
 import { AiOutlineClose } from "react-icons/ai";
 
+interface Props{
+        title:string,
+        children:ReactNode,
+        open:boolean,
+        onCancel:()=>void,
+        onOk?:()=>void,
+        width:string,
+        footer:boolean,
+        okText?:string,
+        okButtonProps?:{disabled:boolean}
+}
+
 export const Modal = ({
         title="Add User",
         children,
@@ -10,15 +22,9 @@ export const Modal = ({
         onOk,
         width,
         footer=true,
-}:{
-        title:string,
-        children:ReactNode,
-        open:boolean,
-          onCancel:()=>void,
-        onOk:()=>void,
-        width:string,
-        footer:boolean,
-}) => {
+        okText,
+        okButtonProps,
+}:Props) => {
   return (
     open&&<div className='fixed w-screen h-screen left-0 top-0 bottom-0 right-0 flex items-center justify-center'>
 
@@ -34,8 +40,12 @@ export const Modal = ({
                 {children}
             </section>
             {footer&&<section className='flex justify-end gap-5 mt-10'>
-                <Button title='Confirm' onClick={onOk} type='primary'/>
-                <Button title='Cancel' onClick={onCancel} type='secondary'/>
+                <Button title={okText?okText:'Confirm'} {...okButtonProps} onClick={()=>{
+                  if(onOk){
+                    onOk();
+                  }
+                }} type='primary'/>
+                <Button title='Cancel' onClick={onCancel} type='secondary' />
             </section>}
         </div>
         <div className='absolute inset-0 bg-black/30 backdrop-blur-[2px]' onClick={onCancel}></div>

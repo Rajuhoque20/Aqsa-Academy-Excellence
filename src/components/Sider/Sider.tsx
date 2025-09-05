@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 interface NavLink{
@@ -17,11 +18,27 @@ const navLinks:NavLink[]=[
     ,{
         id:3, title:"Stuff",url:"/stuff",
     }
+    ,{
+        id:4, title:"Managing User",url:"/managingUser",
+    },
+    {
+        id:5, title:"Notice",url:"/notice",
+    },
+    {
+        id:6, title:"Events",url:"/events",
+    },
+    {
+        id:7, title:"Toppers",url:"/toppers",
+    },
+    {
+        id:8, title:"Job Vacancy",url:"/jobVacancy",
+    }
 ]
 
 export const Sider = () => {
+
   return (
-    <div className='flex flex-col w-1/6 bg-slate-700 h-full p-10'>
+    <div className='flex flex-col w-1/6 bg-slate-700 h-full p-6'>
         <div className='flex flex-col gap-5'>
         {navLinks?.map((item)=>{
             return(
@@ -34,7 +51,9 @@ export const Sider = () => {
 }
 
 const NavItem=({data}:{data:NavLink})=>{
+    const pathName=usePathname();
+    const isActive=pathName===data.url;
     return(
-        <Link href={data.url}>{data.title}</Link>
+        <Link href={data.url} className={`${isActive?'bg-blue-800':'bg-gray-800'} px-5 py-3 rounded-md`}>{data.title}</Link>
     )
 }

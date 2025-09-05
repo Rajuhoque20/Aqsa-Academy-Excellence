@@ -10,6 +10,8 @@ export default function Header() {
   const [value, setValue]=useState('English');
     const {data}=useSession();
     console.log("datadata",data)
+
+    //router.push("/student");
   return (
     <>
     <div className='h-[8vh] flex flex-col w-full items-center bg-gray-900 justify-center px-5'>
@@ -35,12 +37,15 @@ export default function Header() {
             
           <span>{data?.user?.name}</span>
           </div>
-        <button onClick={()=>{
-          signOut()
+          
+            <button onClick={()=>{
+          signOut({ callbackUrl: "/" })
 
         }} className='p-2 rounded-full color-white bg-red-600 cursor-pointer'>
           <LogOut/>
         </button>
+          
+       
         </div>
         :
         <div className='ml-auto mr-10 gap-5 flex items-center'>    

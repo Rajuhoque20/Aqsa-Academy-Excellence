@@ -1,83 +1,47 @@
+'use client'
 import Image from "next/image";
 import Carousel from "../Carousel/Carousel"
-const gallery=[
-    {
-        id:1,
-        data:[
-            {
-                id:1,
-                img:'/student1.jpg',
-                alt:"banstudent1er1",
-                title:"Republic day has been celebrated"
-            },
-             {
-                id:2,
-                img:'/student1.jpg',
-                alt:"banstudent1er1",
-                 title:"Republic day has been celebrated"
-            },
-             {
-                id:3,
-                img:'/student1.jpg',
-                alt:"banstudent1er1",
-                 title:"Republic day has been celebrated"
-            },
-        ]
-          
-    },
-    {
-        id:2,
-        data:[
-            {
-                id:1,
-                img:'/student2.jpg',
-                alt:"banstudent2er1",
-                 title:"Republic day has been celebrated"
-            },
-             {
-                id:2,
-                img:'/student2.jpg',
-                alt:"banstudent2er1",
-                 title:"Republic day has been celebrated"
-            },
-             {
-                id:3,
-                img:'/student2.jpg',
-                alt:"banstudent2er1",
-                 title:"Republic day has been celebrated"
-            },
-        ]
-          
-    },
-    {
-        id:3,
-        data:[
-            {
-                id:1,
-                img:'/contact.jpg',
-                alt:"bancontacter1",
-                 title:"Republic day has been celebrated"
-            },
-             {
-                id:2,
-                img:'/contact.jpg',
-                alt:"bancontacter1",
-                 title:"Republic day has been celebrated"
-            },
-             {
-                id:3,
-                img:'/contact.jpg',
-                alt:"bancontacter1",
-                 title:"Republic day has been celebrated"
-            },
-        ]
-          
-    },
-];
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 export const Gallery=()=>{
+    const [events, setEventsData]=useState([]);
+      const getEvents=()=>{
+     axios.get('/api/event')
+    .then(res=>{
+      if(res){
+        setEventsData(res?.data);
+      }
+    })
+    .catch(error=>{
+      console.log(error)
+    })
+  }
+
+  useEffect(()=>{
+   getEvents();
+  },[]);
+
+  const gallery = [];
+  for (let i = 0; i < events.length; i += 3) {
+    const chunk = events.slice(i, i + 3);
+    gallery.push({
+      id: gallery.length + 1,
+      data: chunk.map((event:any, idx) => ({
+        id: idx + 1, // local id inside the chunk
+        img: event.image,
+        alt: event.title || "event image",
+        description: event.description,
+        title: event.title,
+      }))
+    });
+  }
+
+  console.log(gallery);
+
     return(
-        <div className="h-[70vh] w-full px-30 mb-30 gap-10 flex flex-col">
-            <h1 className="text-5xl text-black">Gallery</h1>
+        <div className="h-[60vh] w-full px-30 mb-30 gap-10 flex flex-col">
+            <h1 className="text-5xl text-black">Events</h1>
              <Carousel
                dataLength={gallery?.length}
                RenderedItem={gallery?.map((item)=>{
@@ -87,11 +51,12 @@ export const Gallery=()=>{
                             item?.data?.map(img=>{
                                 return(
                                     <div key={img.id} className="shadow-md p-5 flex flex-col gap-3 bg-gray-200 rounded-md">
-                                        <div className="relative h-[350px]">
+                                        <div className="relative h-[300px]">
                                             <Image src={img.img} fill alt={img.alt} />
 
                                         </div>
-                                        <span className="text-gray-700">{img.title}</span>
+                                        <h2 className="text-gray-700 font-semibold">{img.title}</h2>
+                                        <p className="text-gray-700">{img.description}</p>
                                     </div>
                                 )
                             })

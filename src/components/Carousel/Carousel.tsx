@@ -1,5 +1,4 @@
 "use client";
-import Image from 'next/image';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 
 const Carousel = ({RenderedItem, dataLength}:{RenderedItem:ReactNode, dataLength:number}) => {
@@ -74,14 +73,14 @@ useEffect(()=>{
 
   return (
     <div className='relative h-full flex w-full'  ref={containerRef}>
-         <button className="absolute left-15 top-1/2 transform -translate-y-1/2 bg-gray-500 cursor-pointer text-white w-[3.5rem] h-[3.5rem] z-10 rounded-full" onClick={handleDecrement}>{'<'}</button>
+         <button className="absolute left-15 top-1/2 transform -translate-y-1/2 bg-gray-500/30 backdrop-blur-md cursor-pointer text-white w-[3.5rem] h-[3.5rem] z-10 rounded-full" onClick={handleDecrement}>{'<'}</button>
          <div
         className="flex w-[99vw] h-full overflow-hidden scroll-smooth snap-x snap-mandatory box-border"
         ref={listRef}
       >
         {RenderedItem}
         </div>
-         <button className="absolute right-15 top-1/2 cursor-pointer transform -translate-y-1/2 bg-gray-500 text-white w-[3.5rem] h-[3.5rem] z-10 rounded-full"
+         <button className="absolute right-15 top-1/2 cursor-pointer transform -translate-y-1/2 bg-gray-500/30 backdrop-blur-md text-white w-[3.5rem] h-[3.5rem] z-10 rounded-full"
          onClick={handleIncrement}
          >{'>'}</button>
     </div>

@@ -23,7 +23,7 @@ export const OurTopper = () => {
   },[]);
 
   return (
-    <div className='h-max text-black p-30 gap-5 flex flex-col'>
+    <div className='h-max text-black p-30 gap-5 flex flex-col' id="toppers">
       <h1 className='text-5xl mt-10'>Our Toppers</h1>
       <h2 className='text-3xl mt-5'>Class XII (2024)</h2>
       <div className='grid gap-8 grid-cols-3 '>

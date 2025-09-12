@@ -39,7 +39,7 @@ export const NewsFeed=()=>{
    getNotice();
   },[]);
     return(
-        <div className="text-gray-500 mt-50 px-30 gap-10 flex flex-col">
+        <div className="text-gray-500 mt-50 px-30 gap-10 flex flex-col" id="news">
             <h1 className="text-black text-5xl">
                 Notice & Important Links
             </h1>

@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export const Contact=()=>{
     return(
-        <div className="flex flex-col gap-10 px-30 pb-30 h-max">
+        <div className="flex flex-col gap-10 px-30 pb-30 h-max" id="contact">
             <h1 className="text-5xl text-black">Contact</h1>
             <div className="flex gap-20">
                 <div className="relative w-3/5 shadow-md transition hover:scale-105">

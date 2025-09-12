@@ -17,23 +17,26 @@ const navLinks:NavLink[]=[
     }
     ,{
         id:3, title:"Stuff",url:"/stuff",
-    }
-    ,{
+    },
+     {
         id:4, title:"Managing User",url:"/managingUser",
     },
     {
-        id:5, title:"Notice",url:"/notice",
+        id:5, title:"Candidates",url:"/candidate",
     },
     {
-        id:6, title:"Events",url:"/events",
+        id:6, title:"Notice",url:"/notice",
     },
     {
-        id:7, title:"Toppers",url:"/toppers",
+        id:7, title:"Events",url:"/events",
     },
     {
-        id:8, title:"Job Vacancy",url:"/jobVacancy",
+        id:8, title:"Toppers",url:"/toppers",
+    },
+    {
+        id:9, title:"Job Vacancy",url:"/jobVacancy",
     }
-]
+];
 
 export const Sider = () => {
 

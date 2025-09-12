@@ -1,7 +1,9 @@
+
 import Image from "next/image"
 import Carousel from "../Carousel/Carousel"
 import Link from "next/link"
 import  './Home.css'
+import { TabCard } from "./TabCard"
 const banners=[
     {
           img:'/bg_banner_1.jpg',
@@ -16,9 +18,30 @@ const banners=[
            alt:"banner3"
     }
 ];
+
+const tabs=[
+    {
+        title:"News",
+        id:'news',
+        bg:'bg-red-700',
+    },
+     {
+        title:"Our Toppers",
+        id:'toppers',
+        bg:'bg-blue-700',
+    },
+     {
+        title:"Why Aqsa",
+        id:'about',
+        bg:'bg-gray-800',
+    },
+];
+
+ 
+
 export const BannerHome=()=>{
     return(
-        <div className="flex flex-col h-[92vh]  w-screen relative">
+        <div className="flex flex-col h-[92vh]  w-screen relative" id="home">
                <Carousel
                dataLength={banners?.length}
                RenderedItem={banners?.map((item)=>{
@@ -52,15 +75,12 @@ export const BannerHome=()=>{
                         </div>
                         <div className='absolute bottom-[-5rem] left-0 flex justify-center w-full h-[200px]'>
                             <div className='h-full flex gap-5'>
-                            <div  className='bg-red-700 shadow-sm  h-full flex w-[300px] items-center justify-center cursor-pointer hover:scale-110 transition rounded-md shadow-md' >
-                            <span className='text-xl font-semibold'>News</span>
-                            </div>
-                            <div  className='h-full shadow-sm  flex w-[300px] bg-blue-700 justify-center items-center cursor-pointer hover:scale-110 transition rounded-md shadow-md'>
-                            <span className='text-xl font-semibold'>Our Toppers</span>
-                            </div>
-                            <div  className='h-full shadow-sm  flex w-[300px] bg-gray-800 justify-center items-center cursor-pointer hover:scale-110 transition rounded-md shadow-md'>
-                            <span className='text-xl font-semibold'>Why Al Aqsa</span>
-                            </div>
+                                {tabs?.map(item=>{
+                                    return(
+                                        <TabCard item={item} key={item.id}/>
+                                    )
+                                })}
+                               
                             </div>
                         </div>
                     </div>

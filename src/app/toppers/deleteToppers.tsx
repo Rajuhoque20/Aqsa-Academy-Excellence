@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
-import { Modal } from "src/components/modal/Modal";
+import React, { useState } from "react";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type Props={
     open:boolean,
@@ -8,7 +9,7 @@ type Props={
     deleteParam:{name:string, id:string},
     getToppers:()=>void,
 }
-export const DeleteTopper=(
+export default function DeleteTopper(
     {
         open,
         setOpen,
@@ -16,7 +17,7 @@ export const DeleteTopper=(
         getToppers,
     }:Props
 
-)=>{
+){
      const [loading, setLoading]=useState<boolean>(false);
     const deleteHandler=()=>{
         if (loading) return;
@@ -27,11 +28,13 @@ export const DeleteTopper=(
                          getToppers();
                          setOpen(false);
                          setLoading(false);
+                         Notification.success('Topper has been deleted.')
                     }
                 })
                 .catch(error=>{
                     console.log(error)
                     setLoading(false);
+                    Notification.error('Something went wrong');
                 })
     }
     return(

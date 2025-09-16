@@ -1,11 +1,14 @@
 
 export const EditButton=({
-  onClick
+  onClick,
+  title="Edit"
 }:{
-  onClick:()=>void
+  onClick:()=>void,
+  title?:string,
+
 })=>{
   return(
-    <button onClick={onClick} className='px-3 py-1 bg-green-600 rounded-md text-white cursor-pointer'>Edit</button>
+    <button onClick={onClick} className='px-3 py-1 bg-green-600 rounded-md text-white cursor-pointer'>{title}</button>
   )
 }
 export const DeleteButton=({onClick}:{onClick:()=>void})=>{

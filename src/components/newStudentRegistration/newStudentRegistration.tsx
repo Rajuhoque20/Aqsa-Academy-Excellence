@@ -1,17 +1,18 @@
 import React, { FormEvent, useState } from 'react'
-import { Modal } from '../modal/Modal';
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 import { Button } from '../Button';
 import axios from 'axios';
+import Notification from '../Notification/Notifcation';
 
 type Props={
     open:boolean,
     setOpen:(val:boolean)=>void
 }
 
-export const NewStudentRegistration = ({
+export default function NewStudentRegistration  ({
     open,
     setOpen,
-}:Props) => {
+}:Props)  {
     const [loading, setLoading]=useState(false);
 
     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
@@ -26,10 +27,15 @@ export const NewStudentRegistration = ({
             if(res){
                 console.log("res",res)
                 setOpen(false);
+                Notification.success('You have registered successfully')
             }
         }
         catch(error){
-            console.log(error);
+           if (axios.isAxiosError(error)) {
+                Notification.error(error.response?.data?.message ?? "Something went wrong!");
+            } else {
+                Notification.error("Unexpected error occurred!");
+            }
         }
         finally{
             setLoading(false);

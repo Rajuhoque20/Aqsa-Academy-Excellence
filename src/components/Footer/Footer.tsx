@@ -83,24 +83,6 @@ const footerData=[
   }
 ];
 
-const createUser=async()=>{
-  let user={
-    name:"Raju Hoque",
-    email:"raju.hoque@gmail.com",
-    username:"Raju123",
-    password:"12345",
-    role:"admin",
-  }
- 
-  await axios.post('api/users',user)
-  .then(res=>{
-    console.log("REEE", res)
-  })
-  .catch(error=>{
-    console.log(error)
-  });
-}
-
 export default function Footer() {
     const pathname = usePathname();
     console.log("pathname",pathname)

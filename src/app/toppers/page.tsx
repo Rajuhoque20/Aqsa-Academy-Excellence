@@ -4,9 +4,10 @@ import React, { useEffect, useState, useMemo } from "react";
 import { SearchInput } from "src/components/SearchInput";
 import { AddButton, DeleteButton, EditButton } from "src/components/Button";
 import axios from "axios";
-import { AddTopperModal } from "./addToppers";
-import { DeleteTopper } from "./deleteToppers";
+const AddTopperModal= React.lazy(()=>import("./addToppers"));
+const DeleteTopper= React.lazy(()=>import("./deleteToppers"));
 import Image from "next/image";
+import Loader from "src/components/Loader/Loader";
 
 type Topper = {
   _id: string;
@@ -34,13 +35,16 @@ export default function Toppers() {
     name: "",
     id: "",
   });
+  const [loading, setLoading]=useState(true);
 
   const getToppers = async () => {
     try {
       const res = await axios.get("/api/topper");
       setToppersData(res.data);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch toppers:", error);
+      setLoading(false);
     }
   };
 
@@ -67,11 +71,15 @@ export default function Toppers() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 gap-5 overflow-y-auto h-[77vh]">
-        {searchData.length === 0 ? (
+       {
+        loading?                
+        <Loader/>: 
+        searchData.length === 0 ? (
           <p className="text-gray-400 col-span-2 text-center">No toppers found.</p>
-        ) : (
-          searchData.map((item) => (
+        ) : 
+      <div className="grid grid-cols-2 gap-5 overflow-y-auto h-[77vh]">
+       
+          {searchData.map((item) => (
             <TopperCard
               key={item._id}
               item={item}
@@ -85,8 +93,8 @@ export default function Toppers() {
               }}
             />
           ))
-        )}
-      </div>
+        }
+      </div>}
 
       {/* Modals */}
       <AddTopperModal

@@ -1,54 +1,52 @@
 import axios from "axios";
-import { Dispatch, FormEvent, SetStateAction } from "react";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
-
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
+type ManagingUserDTO={
+  name:string,
+  email:string,
+  phone:string,
+  role:string,
+  gender:string,
+  _id?:string,
+  address:string,
+}
 type Props={
     open:boolean,
     type:string,
     setOpen:Dispatch<SetStateAction<boolean>>,
     getManagingUsers:()=>void,
-    editParam:any,
+    editParam:ManagingUserDTO|null,
 }
 
-export const AddManagingUserModal=({
+export default function AddManagingUserModal({
     open,
     type,
     setOpen,
     getManagingUsers,
     editParam
 }:Props
-)=>{
+){
     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         const form=e.currentTarget;
         const formData=new FormData(form);
-         const data =  Object.fromEntries(formData.entries());; 
-        if(type==='add'){
-             await axios.post('/api/managingUser',data)
-        .then(res=>{
-            if(res){
-                getManagingUsers();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }
-        else{         
-            await axios.patch(`/api/managingUser?id=${editParam?._id}`,data)
-        .then(res=>{
-            if(res){
-                getManagingUsers();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }       
+         const data =  Object.fromEntries(formData.entries());
+         const method=type==='add'?'post':'patch';
+         const url=type==='add'?'/api/managingUser':`/api/managingUser?id=${editParam?._id}`;
+         try{
+            await axios({method, url, data});
+            getManagingUsers();
+            setOpen(false);
+            Notification.success(`Managing user has been ${type==='add'?'added':'updated'}.`);
+         }
+         catch(error){
+            console.log(error);
+             Notification.error('Something went wrong!');
+         }      
     }
+    
   return(
     <>
      <Modal

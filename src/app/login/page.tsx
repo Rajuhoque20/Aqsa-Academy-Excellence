@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import classes from './style.module.css';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -18,11 +18,12 @@ export default function LoginPage() {
         </small>
         <form
         action={''}
-          onSubmit={async(e) => {
+          onSubmit={async(e:FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            const form = e.target.elements;
-            const username = form.username.value;
-            const password = form.password.value;
+            const form = e.currentTarget;
+            const formData = new FormData(form);
+            const username = formData.get("username") as string;
+            const password = formData.get("password") as string;
             const params = { username, password };
             try{
               const res=await signIn('credentials',{
@@ -38,26 +39,7 @@ export default function LoginPage() {
             }
             catch(error){
               console.log(error)
-            }
-            // const handleLogin=async()=>{
-            //   await axios.post('api/login',params)
-            //   .then(res=>{
-            //     if(res){
-            //       console.log("responsse",res);
-            //        router.push("/student");
-            //        localStorage.setItem('login','yes');
-            //        setIsLogin(true);
-            //     }
-
-            //   })
-            //   .catch(error=>{
-            //     console.log("errror",error)
-            //   })
-
-            // }
-            // handleLogin();
-           
-
+            }                  
           }}
           className={classes.form}
         >

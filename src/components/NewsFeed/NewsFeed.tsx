@@ -20,6 +20,11 @@ const monthsMap: Record<MonthNumber, string> = {
   '11': 'Nov',
   '12': 'Dec',
 };
+type NewsDTO={
+  title:string,
+  date:string,
+  file:string,
+}
 export const NewsFeed=()=>{
     const [newsFeed,setNewsFeed]=useState([]);
 
@@ -44,7 +49,7 @@ export const NewsFeed=()=>{
                 Notice & Important Links
             </h1>
             <div className="grid grid-cols-2 flex-col gap-5">
-                {newsFeed?.map((item:any,index)=>{
+                {newsFeed?.map((item:NewsDTO,index)=>{
                     const format=item?.date?.split('-');
                     const day=format?.[2];
                    const month = monthsMap[format?.[1] as MonthNumber];

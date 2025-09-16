@@ -1,58 +1,33 @@
-import axios from "axios";
-import { Dispatch, FormEvent, SetStateAction } from "react";
-import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
 
+import React, { FormEvent } from "react";
+import { Button } from "src/components/Button";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
+
+type PaymentDTO={
+    _id?:string,
+    pay_month:string,
+    monthly_fees:string,
+    paid_amount:string,
+    due_fees:string,
+    pay_date:string,
+}
 type Props={
-    studentId:string,
     open:boolean,
     type:string,
-    setOpen:Dispatch<SetStateAction<boolean>>,
-    getStudents:()=>void,
-    editParam:any,
+    setOpen:(val:boolean)=>void,
+    editParam:PaymentDTO|null,
+    handleSubmit:(e: FormEvent<HTMLFormElement>) => Promise<void>
 }
 
-export const AddPayment=({
-    studentId,
+export default function AddPayment({
     open,
     type,
     setOpen,
-    getStudents,
-    editParam
+    editParam,
+    handleSubmit
 }:Props
-)=>{
-    const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
-        e.preventDefault();
-        const form=e.currentTarget;
-        const formData=new FormData(form);
-        const plainFormData = Object.fromEntries(formData.entries());
-        console.log("formData",plainFormData);
-        if(type==='add'){
-             await axios.post('/api/studentPayment',{...plainFormData, studentId})
-        .then(res=>{
-            if(res){
-                getStudents();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }
-        else{
-           
-            await axios.patch(`/api/studentPayment?id=${editParam?._id}`,{...plainFormData, studentId})
-        .then(res=>{
-            if(res){
-                getStudents();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }        
-    }
+){
+   
   return(
     <>
      <Modal

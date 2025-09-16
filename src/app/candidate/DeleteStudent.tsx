@@ -1,32 +1,35 @@
 import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
-import { Modal } from "src/components/modal/Modal";
+import React, { Dispatch, SetStateAction } from "react";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type Props={
     open:boolean,
     setOpen:Dispatch<SetStateAction<boolean>>,
     deleteParam:{name:string, id:string},
-    getStudents:()=>void,
+    getCandidates:()=>void,
 }
 export const DeleteStudent=(
     {
         open,
         setOpen,
         deleteParam,
-        getStudents,
+        getCandidates,
     }:Props
 
 )=>{
     const deleteHandler=()=>{
-        axios.delete(`/api/students?id=${deleteParam.id}`)  
+        axios.delete(`/api/newStudentRegistration?id=${deleteParam.id}`)  
                 .then(res=>{
                     if(res){
-                         getStudents();
+                        Notification.success('Candidate has been deleted')
+                         getCandidates();
                          setOpen(false);
                     }
                 })
                 .catch(error=>{
-                    console.log(error)
+                    console.log(error);
+                    Notification.error('Something went wrong');
                 })
     }
     return(
@@ -40,7 +43,7 @@ export const DeleteStudent=(
               }}
               footer={true}
               >
-                <span className="text-center">Are you sure, you want to delete the student, <b>{deleteParam?.name}</b>?</span>
+                <span className="text-center">Are you sure, you want to delete the Candidate, <b>{deleteParam?.name}</b>?</span>
               </Modal>
     )
 }

@@ -1,7 +1,8 @@
 import axios from "axios";
-import { FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type NoticeParam = {
   _id?: string;
@@ -18,13 +19,13 @@ type Props = {
   editParam?: NoticeParam;
 };
 
-export const AddNoticeModal = ({
+export default function AddNoticeModal  ({
   open,
   type,
   setOpen,
   getNotice,
   editParam,
-}: Props) => {
+}: Props){
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -44,8 +45,10 @@ export const AddNoticeModal = ({
       await axios({ method, url, data: formData });
       getNotice();
       setOpen(false);
+      Notification.success(`Notice has been ${type==='add'?'added':'updated'}`);
     } catch (err) {
       console.error("Error saving notice:", err);
+      Notification.error('Something went wrong!');
     } finally {
       setLoading(false);
     }

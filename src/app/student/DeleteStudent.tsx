@@ -1,14 +1,18 @@
 import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
-import { Modal } from "src/components/modal/Modal";
-
+import React, { Dispatch, SetStateAction } from "react";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
+type DeleteDTO={
+  name:string,
+  id:string|undefined
+}
 type Props={
     open:boolean,
     setOpen:Dispatch<SetStateAction<boolean>>,
-    deleteParam:{name:string, id:string},
+    deleteParam:DeleteDTO|null,
     getStudents:()=>void,
 }
-export const DeleteStudent=(
+export default function DeleteStudent(
     {
         open,
         setOpen,
@@ -16,17 +20,19 @@ export const DeleteStudent=(
         getStudents,
     }:Props
 
-)=>{
+){
     const deleteHandler=()=>{
-        axios.delete(`/api/students?id=${deleteParam.id}`)  
+        axios.delete(`/api/students?id=${deleteParam?.id}`)  
                 .then(res=>{
                     if(res){
                          getStudents();
                          setOpen(false);
+                         Notification.success("Student has been deleted successfully.")
                     }
                 })
                 .catch(error=>{
-                    console.log(error)
+                    console.log(error);
+                    Notification.error('Something went wrong');
                 })
     }
     return(

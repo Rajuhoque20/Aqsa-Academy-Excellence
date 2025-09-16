@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Stuff from "../../../../models/stuff";
+import StuffPayment from "../../../../models/stuffPayment";
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,7 +38,16 @@ export async function GET() {
   try {
     await connectToDatabase();
     const stuff = await Stuff.find();
-    return NextResponse.json(stuff, { status: 200 });
+    const stuffPayment=await StuffPayment.find().lean();
+    
+    const formatted = stuff.map(stuff => {
+       const due_salary=stuffPayment.filter((item)=>item.stuffId===stuff._id.toString()).reduce((tot,item)=>Number(item.due_fees)+tot, 0)
+      return {
+      ...stuff.toObject(),
+    due_salary
+    }});
+
+    return NextResponse.json(formatted, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: 'Failed to fetch stuff' }, { status: 500 });

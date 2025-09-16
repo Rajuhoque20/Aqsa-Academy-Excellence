@@ -5,10 +5,21 @@ import { SearchInput } from 'src/components/SearchInput';
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
-import { AddTeacherModal } from './addTeacher';
-import { DeleteTeacher } from './deleteTeacher';
+import Loader from 'src/components/Loader/Loader';
+const AddTeacherModal =React.lazy(()=>import('./addTeacher'));
+const DeleteTeacher =React.lazy(()=>import('./deleteTeacher'));
 
 const columns=["Name","Gender", "email", "Phone","Monthly Salary", "Due Salary","Action",];
+interface TeacherDTO{
+  name:string,
+  gender:string,
+  email:string,
+  phone:string,
+  monthly_salary:string,
+  due_salary:number,
+  _id:string,
+  address?:string
+}
 
 export default function Teacher() {
   const [open, setOpen]=useState<boolean>(false);
@@ -16,9 +27,9 @@ export default function Teacher() {
   const [isEdit, setIsEdit]=useState(false);
   const [isDelete, setIsDelete]=useState(false);
   const [deleteParam, setDeleteParam]=useState({name:'', id:''});
-  const [editParam, setEditParam]=useState();
+  const [editParam, setEditParam]=useState<TeacherDTO|null>(null);
   const [searchKey, setSearchKey]=useState('');
-  console.log("searchKey",searchKey);
+  const [loading, setLoading]=useState(true);
   const router=useRouter();
 
   const getTeachers=()=>{
@@ -26,10 +37,12 @@ export default function Teacher() {
     .then(res=>{
       if(res){
         setTeachersData(res?.data);
+        setLoading(false);
       }
     })
     .catch(error=>{
-      console.log(error)
+      console.log(error);
+      setLoading(false);
     })
   }
 
@@ -37,7 +50,7 @@ export default function Teacher() {
    getTeachers();
   },[]);
 
-  const searchData=!searchKey?teachersData:teachersData?.filter((item:any)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const searchData=!searchKey?teachersData:teachersData?.filter((item:TeacherDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
@@ -56,7 +69,21 @@ export default function Teacher() {
           </tr>
         </thead>
         <tbody>
-          {searchData?.map((item:any)=>{
+          {loading?
+            <tr>
+              <td colSpan={12}><Loader/></td>
+            </tr>:
+
+            searchData.length===0?
+            <tr>
+              <td colSpan={12}>
+                <div className="flex items-center justify-center w-full text-center h-[5rem]">
+                  <p>No data found!</p>
+              </div>
+              </td>
+            </tr>          
+            :
+          searchData?.map((item:TeacherDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                 <td className="px-6 py-4 cursor-pointer" onClick={()=>{
@@ -84,7 +111,7 @@ export default function Teacher() {
           })}
         </tbody>
       </table>
-       <AddTeacherModal open={open} type={"add"} setOpen={setOpen} getTeachers={getTeachers} editParam={{}}/>
+       <AddTeacherModal open={open} type={"add"} setOpen={setOpen} getTeachers={getTeachers} editParam={null}/>
        <AddTeacherModal open={isEdit} type='edit' setOpen={setIsEdit} getTeachers={getTeachers} editParam={editParam}/>
        <DeleteTeacher open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getTeachers={getTeachers}/>
     </div>

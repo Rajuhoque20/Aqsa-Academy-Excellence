@@ -3,8 +3,9 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { SearchInput } from 'src/components/SearchInput'
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button'
 import axios from 'axios'
-import { AddNoticeModal } from './addNotice'
-import { DeleteNotice } from './deleteNotice'
+import Loader from 'src/components/Loader/Loader'
+const AddNoticeModal = React.lazy(()=>import('./addNotice'));
+const DeleteNotice = React.lazy(()=>import('./deleteNotice'));
 
 interface NoticeItem {
   _id: string
@@ -26,14 +27,17 @@ export default function Notice() {
     name: '',
     id: '',
   })
+  const [loading, setLoading]=useState(true);
 
   // ✅ Fetch notices
   const getNotice = useCallback(async () => {
     try {
       const res = await axios.get('/api/notice')
-      setNoticeData(res.data || [])
+      setNoticeData(res.data || []);
+      setLoading(false);
     } catch (error) {
-      console.error('Error fetching notices:', error)
+      console.error('Error fetching notices:', error);
+      setLoading(false);
     }
   }, [])
 
@@ -76,7 +80,9 @@ export default function Notice() {
 
       {/* Notice List */}
       <div className="flex flex-col gap-5 overflow-y-auto h-[77vh]">
-        {searchData&&searchData.length > 0 ? (
+         {loading?                
+          <Loader/>:             
+          searchData&&searchData.length > 0 ? (
           searchData.map((item) => (
             <div
               key={item._id}

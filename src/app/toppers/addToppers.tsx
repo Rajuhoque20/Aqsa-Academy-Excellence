@@ -1,7 +1,8 @@
 import axios from "axios";
-import { FormEvent, useState, } from "react";
+import React, { FormEvent, useState, } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type Props = {
   open: boolean;
@@ -17,13 +18,13 @@ setOpen: (value: boolean) => void;
   };
 };
 
-export const AddTopperModal = ({
+export default function AddTopperModal ({
   open,
   type,
   setOpen,
   getToppers,
   editParam,
-}: Props) => {
+}: Props) {
     const [loading, setLoading]=useState<boolean>(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,11 +40,12 @@ export const AddTopperModal = ({
 
       const method = type === "add" ? "post" : "patch";
       await axios({ method, url, data: formData });
-
+      Notification.success(`Topper han been ${type==='add'?'added':'updated'}`)
       getToppers();
       setOpen(false);
     } catch (err) {
-      console.error("Error saving topper:", err);
+      console.log(err);
+      Notification.error('Something went wrong!')
     }
     finally{
         setLoading(false);

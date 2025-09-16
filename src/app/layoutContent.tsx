@@ -5,6 +5,7 @@ import React, { ReactNode } from 'react';
 import AuthLayout from 'src/components/AuthContent/AuthLayout';
 import Footer from 'src/components/Footer/Footer';
 import Header from 'src/components/Header/Header';
+import Loader from 'src/components/Loader/Loader';
 
 export const LayoutContent = ({ element }: { element: ReactNode }) => {
   const { data, status } = useSession();
@@ -12,7 +13,7 @@ export const LayoutContent = ({ element }: { element: ReactNode }) => {
   if (status === 'loading') {
     // You can replace this with a spinner or skeleton loader if you like
     return <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-      <span className='text-white'>Loading...</span>
+      <Loader/>
     </div>;
   }
 

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
-import { Modal } from "src/components/modal/Modal";
+import React, { useState } from "react";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type Props = {
   open: boolean;
@@ -9,12 +10,12 @@ type Props = {
   getNotice: () => void;
 };
 
-export const DeleteNotice = ({
+export default function DeleteNotice  ({
   open,
   setOpen,
   deleteParam,
   getNotice,
-}: Props) => {
+}: Props)  {
   const [loading, setLoading] = useState(false);
 
   const deleteHandler = async () => {
@@ -25,8 +26,10 @@ export const DeleteNotice = ({
       await axios.delete(`/api/notice?id=${deleteParam.id}`);
       getNotice();
       setOpen(false);
+      Notification.success(`Notice has been deleted.`)
     } catch (err) {
       console.error("Error deleting notice:", err);
+      Notification.error('Something went wrong!');
     } finally {
       setLoading(false);
     }

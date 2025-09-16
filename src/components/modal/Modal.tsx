@@ -14,7 +14,7 @@ interface Props{
         okButtonProps?:{disabled:boolean}
 }
 
-export const Modal = ({
+export default function Modal({
         title="Add User",
         children,
         open,
@@ -24,7 +24,7 @@ export const Modal = ({
         footer=true,
         okText,
         okButtonProps,
-}:Props) => {
+}:Props) {
   return (
     open&&<div className='fixed w-screen h-screen left-0 top-0 bottom-0 right-0 flex items-center justify-center ' style={{zIndex:9999}}>
 

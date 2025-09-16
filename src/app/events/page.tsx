@@ -3,9 +3,10 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { SearchInput } from 'src/components/SearchInput'
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button'
 import axios from 'axios'
-import { AddEventModal } from './addEvents'
-import { DeleteEvents } from './deleteEvents'
+const AddEventModal= React.lazy(()=>import('./addEvents'));
+const DeleteEvents= React.lazy(()=>import('./deleteEvents'));
 import Image from 'next/image'
+import Loader from 'src/components/Loader/Loader'
 
 interface EventItem {
   _id: string
@@ -29,15 +30,18 @@ export default function Events() {
   const [deleteParam, setDeleteParam] = useState<{ name: string; id: string }>({
     name: '',
     id: '',
-  })
+  });
+  const [loading, setLoading]=useState(true);
 
   // ✅ Fetch Events
   const getEvents = useCallback(async () => {
     try {
       const res = await axios.get('/api/event')
-      setEventsData(res.data || [])
+      setEventsData(res.data || []);
+      setLoading(false);
     } catch (error) {
-      console.error('Error fetching events:', error)
+      console.error('Error fetching events:', error);
+      setLoading(false);
     }
   }, [])
 
@@ -80,7 +84,9 @@ export default function Events() {
 
       {/* Events List */}
       <div className="flex flex-col gap-5 overflow-y-auto h-[77vh]">
-        {searchData.length > 0 ? (
+        {loading?                
+        <Loader/>: 
+        searchData.length > 0 ? (
           searchData.map((item) => (
             <div
               key={item._id}

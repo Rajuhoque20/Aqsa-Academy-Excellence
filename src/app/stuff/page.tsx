@@ -5,29 +5,47 @@ import { SearchInput } from 'src/components/SearchInput';
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
-import { AddStuffModal } from './AddStuff';
-import { DeleteStuff } from './DeleteStuff';
+import Loader from 'src/components/Loader/Loader';
+const AddStuffModal = React.lazy(()=>import('./AddStuff'));
+const DeleteStuff = React.lazy(()=>import('./DeleteStuff'));
 
 const columns=["Name","Gender", "Designation", "Phone","Monthly Salary", "Due Salary","Action",];
+interface StuffDTO{
+  name:string,
+  gender:string,
+  designation:string,
+  phone:string,
+  monthly_salary:string,
+  due_salary:number,
+  _id?:string,
+  address?:string,
+}
+interface DeleteDTO{
+  name:string,
+  id?:string|undefined
+}
 
 export default function Stuff() {
   const [open, setOpen]=useState<boolean>(false);
   const [stuffData, setStuffData]=useState([]);
   const [isEdit, setIsEdit]=useState(false);
   const [isDelete, setIsDelete]=useState(false);
-  const [deleteParam, setDeleteParam]=useState({name:'', id:''});
-  const [editParam, setEditParam]=useState();
+  const [deleteParam, setDeleteParam]=useState<DeleteDTO|null>(null);
+  const [editParam, setEditParam]=useState<StuffDTO|null>(null);
   const [searchKey, setSearchKey]=useState('');
+  const [loading, setLoading]=useState(true);
   const router=useRouter();
   const getStuff=()=>{
      axios.get('/api/stuff')
     .then(res=>{
       if(res){
         setStuffData(res?.data);
+        setLoading(false);
       }
     })
     .catch(error=>{
       console.log(error)
+      setLoading(false);
     })
   }
 
@@ -35,7 +53,7 @@ export default function Stuff() {
    getStuff();
   },[]);
 
-  const searchData=!searchKey?stuffData:stuffData?.filter((item:any)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const searchData=!searchKey?stuffData:stuffData?.filter((item:StuffDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
@@ -54,7 +72,21 @@ export default function Stuff() {
           </tr>
         </thead>
         <tbody>
-          {searchData?.map((item:any)=>{
+           {loading?
+                      <tr>
+                        <td colSpan={12}><Loader/></td>
+                      </tr>:
+          
+                      searchData.length===0?
+                      <tr>
+                        <td colSpan={12}>
+                          <div className="flex items-center justify-center w-full text-center h-[5rem]">
+                            <p>No data found!</p>
+                        </div>
+                        </td>
+                      </tr>          
+                      :
+          searchData?.map((item:StuffDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                 <td className="px-6 py-4 cursor-pointer" onClick={()=>{
@@ -82,7 +114,7 @@ export default function Stuff() {
           })}
         </tbody>
       </table>
-       <AddStuffModal open={open} type={"add"} setOpen={setOpen} getStuff={getStuff} editParam={{}}/>
+       <AddStuffModal open={open} type={"add"} setOpen={setOpen} getStuff={getStuff} editParam={null}/>
        <AddStuffModal open={isEdit} type='edit' setOpen={setIsEdit} getStuff={getStuff} editParam={editParam}/>
        <DeleteStuff open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getStuff={getStuff}/>
     </div>

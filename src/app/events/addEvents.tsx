@@ -1,7 +1,8 @@
 import axios from "axios";
-import { FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type EventParam = {
   _id?: string;
@@ -19,13 +20,13 @@ type Props = {
   editParam: EventParam;
 };
 
-export const AddEventModal = ({
+export default function AddEventModal ({
   open,
   type,
   setOpen,
   getEvents,
   editParam,
-}: Props) => {
+}: Props)  {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -46,8 +47,10 @@ export const AddEventModal = ({
 
       getEvents();
       setOpen(false);
+      Notification.success(`Event has been ${type==='add'?"added":'updated'}`)
     } catch (err) {
       console.error("Failed to submit event:", err);
+       Notification.error('Something went wrong!');
     } finally {
       setLoading(false);
     }

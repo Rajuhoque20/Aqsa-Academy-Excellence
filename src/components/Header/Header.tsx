@@ -1,12 +1,11 @@
 'use client'
-import Link from 'next/link'
 import React, { useState } from 'react'
 import Dropdown from './../Dropdown/Dropdown';
 import './Header.css';
 import { signOut, useSession } from 'next-auth/react';
 import { LogOut } from 'lucide-react';
 import Image from 'next/image';
-import { NewStudentRegistration } from '../newStudentRegistration/newStudentRegistration';
+const NewStudentRegistration=React.lazy(()=>import('../newStudentRegistration/newStudentRegistration'))
  const links=[
       {
         title:"Home",
@@ -26,8 +25,8 @@ export default function Header() {
    const [open,setOpen]=useState(false);
     const {data}=useSession();
 
-  
-   
+    console.log("datadata",data)
+
     const handleClick=(id:string)=>{
       const el=document.querySelector(`#${id}`);
       el?.scrollIntoView({
@@ -43,7 +42,7 @@ export default function Header() {
         {data?.user?
         <div className='flex gap-4 items-center'>
           <div className='relative w-[2.5rem] h-[2.5rem]'>
-          <Image src={'/aqsa_logo.jpg'} alt="aqsa_logo" fill={true} className='rounded-full'/>
+          <Image src={'/aqsa_logo.jpg'} alt="aqsa_logo" fill={true}  className='rounded-full'/>
           </div>
         <span className='text-2xl'>Welcome to Aqsa Academy of Excelence!</span>
         </div>

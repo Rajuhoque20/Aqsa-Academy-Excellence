@@ -1,0 +1,153 @@
+import axios from "axios";
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
+import { Button, DeleteButton, EditButton } from "src/components/Button";
+import Notification from "../Notification/Notifcation";
+import Loader from "../Loader/Loader";
+const AddPayment =React.lazy(()=>import("src/components/AddPayment/addPayment")); 
+const DeletePayment =React.lazy(()=>import("src/components/DeletePayment/deletePayment"));
+const columns=["Payment for","Monthly Fees",'Pay Date', "Paid Amount", "Due", "Action",];
+type PaymentDTO={
+    _id?:string,
+    pay_month:string,
+    monthly_fees:string,
+    paid_amount:string,
+    due_fees:string,
+    pay_date:string,
+}
+type DeleteDTO={
+        name:string,
+        id:string|undefined,
+    }
+
+const dateMonthString=(input:string)=>{
+const [year, month] = input.split("-");
+const date = new Date(`${year}-${month}-01`);
+const result = `${year}/${date.toLocaleString("en-US", { month: "long" })}`;
+return result;
+}
+export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:string]:string}, endPoint:string}){
+  const [isEdit, setIsEdit]=useState(false);
+    const [isDelete, setIsDelete]=useState(false);
+    const [deleteParam, setDeleteParam]=useState<DeleteDTO|null>(null);
+    const [editParam, setEditParam]=useState<PaymentDTO|null>(null);
+    const [open, setOpen]=useState<boolean>(false);
+    const [paymentDatails, setPaymentDetails]=useState([]);
+    const [loading, setLoading]=useState(true);
+    
+    let id='';
+    if(idParam){
+        id=Object.values(idParam)?.[0];
+    }
+
+    const getPayments=useCallback(()=>{
+      axios.get(`/api/${endPoint}/${id}`)
+      .then(res=>{
+        if(res){
+          setPaymentDetails(res?.data);
+          setLoading(false);
+        }
+      })
+      .catch(error=>{
+        console.log(error);
+        setLoading(false);
+      })
+    },[id, endPoint])
+
+    useEffect(()=>{
+       getPayments();
+    },[getPayments])
+
+    const deleteHandler=()=>{
+            axios.delete(`/api/${endPoint}?id=${deleteParam?.id}`)  
+            .then(res=>{
+                if(res){
+                  Notification.success('Payment has been deleted')
+                  getPayments();
+                  setIsDelete(false);
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+                Notification.error('Something went wrong!');
+            })
+        }
+     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
+            e.preventDefault();
+            const form=e.currentTarget;
+            const formData=new FormData(form);
+            const plainFormData = Object.fromEntries(formData.entries());
+            const method=open?'post':'patch';
+            const url=open?`/api/${endPoint}`:`/api/${endPoint}?id=${editParam?._id}`;
+            const data={...plainFormData, ...idParam}; 
+            const message=`Payment has been ${open?'added':'updated'}`;        
+            try{
+                 await axios({method, url,data});
+                 getPayments();
+                setOpen(false);
+                setIsEdit(false);
+                Notification.success(message);
+            }
+            catch(err){
+                console.log(err);
+                Notification.error('Something went wrong!');
+            }       
+        }
+
+  return(
+    <>
+     <div className="flex items-center justify-between">
+             <h2 className="text-xl mt-7 mb-3">Payment Details</h2>
+             <Button title="Add Payment" type="primary" onClick={()=>{setOpen(true)}}/>
+      </div>
+    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                  {columns?.map(item=><th key={item} scope="col" className="px-6 py-3">{item}</th >)}
+              </tr>
+            </thead>
+            <tbody>
+               {loading?
+                        <tr>
+                          <td colSpan={12}><Loader/></td>
+                        </tr>:
+
+                        paymentDatails.length===0?
+                        <tr>
+                          <td colSpan={12}>
+                            <div className="flex items-center justify-center w-full text-center h-[5rem]">
+                              <p>No data found!</p>
+                          </div>
+                          </td>
+                        </tr>
+                        
+                        :
+              paymentDatails?.map((item:PaymentDTO)=>{
+                return(
+                  <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                    <td className="px-6 py-4 cursor-pointer" >{dateMonthString(item.pay_month)}</td>
+                    <td className="px-6 py-4">{item.monthly_fees}</td>
+                    <td className="px-6 py-4">{item.pay_date}</td>
+                      <td className="px-6 py-4">{item.paid_amount}</td>
+                   
+                    <td className="px-6 py-4">{item.due_fees}</td>
+                    <td className="px-6 py-4 flex items-center gap-2">
+                      <EditButton onClick={()=>{setIsEdit(true);
+                        setEditParam(item);
+                      }}/>
+                      <DeleteButton onClick={()=>{
+                        setIsDelete(true);
+                        setDeleteParam({name:item?.pay_month, id:item?._id});
+    
+                      }}/>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          {open&&<AddPayment open={open} type={"add"}  setOpen={setOpen} handleSubmit={handleSubmit} editParam={null}/>}
+          {isEdit&&<AddPayment open={isEdit} type='edit' setOpen={setIsEdit} handleSubmit={handleSubmit} editParam={editParam}/>}
+          <DeletePayment open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} deleteHandler={deleteHandler}/>
+        </>
+  )
+}

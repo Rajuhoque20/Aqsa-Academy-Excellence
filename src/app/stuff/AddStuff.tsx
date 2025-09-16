@@ -1,53 +1,52 @@
 import axios from "axios";
-import { Dispatch, FormEvent, SetStateAction } from "react";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
+interface StuffDTO{
+  name:string,
+  gender:string,
+  designation:string,
+  phone:string,
+  monthly_salary:string,
+  due_salary:number,
+  _id?:string,
+  address?:string,
+}
 type Props={
     open:boolean,
     type:string,
     setOpen:Dispatch<SetStateAction<boolean>>,
     getStuff:()=>void,
-    editParam:any,
+    editParam:StuffDTO|null,
 }
 
-export const AddStuffModal=({
+export default function AddStuffModal({
     open,
     type,
     setOpen,
     getStuff,
     editParam
 }:Props
-)=>{
+){
     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         const form=e.currentTarget;
         const formData=new FormData(form);
-         const data =  Object.fromEntries(formData.entries());; 
-        if(type==='add'){
-             await axios.post('/api/stuff',data)
-        .then(res=>{
-            if(res){
-                getStuff();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }
-        else{         
-            await axios.patch(`/api/stuff?id=${editParam?._id}`,data)
-        .then(res=>{
-            if(res){
-                getStuff();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }       
+        const data =  Object.fromEntries(formData.entries());
+        const method=type==='add'?'post':'patch';
+        const url=type==='add'?'/api/stuff':`/api/stuff?id=${editParam?._id}`;
+        try{
+            await axios({method, url, data});
+            getStuff();
+            setOpen(false);
+            Notification.success(`Staff has been ${type==='add'?'added':'updated'}`)
+         }
+        catch(error){
+            console.log(error);
+            Notification.error('Something went wrong!');
+        }     
     }
   return(
     <>

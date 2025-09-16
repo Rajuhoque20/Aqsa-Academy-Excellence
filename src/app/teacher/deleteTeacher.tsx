@@ -1,6 +1,7 @@
 import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
-import { Modal } from "src/components/modal/Modal";
+import React, { Dispatch, SetStateAction } from "react";
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 
 type Props={
     open:boolean,
@@ -8,7 +9,7 @@ type Props={
     deleteParam:{name:string, id:string},
     getTeachers:()=>void,
 }
-export const DeleteTeacher=(
+export default function DeleteTeacher(
     {
         open,
         setOpen,
@@ -16,17 +17,19 @@ export const DeleteTeacher=(
         getTeachers,
     }:Props
 
-)=>{
+){
     const deleteHandler=()=>{
         axios.delete(`/api/teacher?id=${deleteParam.id}`)  
                 .then(res=>{
                     if(res){
                          getTeachers();
                          setOpen(false);
+                         Notification.success('Teacher has been deleted');
                     }
                 })
                 .catch(error=>{
-                    console.log(error)
+                    console.log(error);
+                    Notification.error('Something went wrong');
                 })
     }
     return(

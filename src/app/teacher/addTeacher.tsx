@@ -1,53 +1,51 @@
 import axios from "axios";
-import { Dispatch, FormEvent, SetStateAction } from "react";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
-
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
+interface TeacherDTO{
+  name:string,
+  gender:string,
+  email:string,
+  phone:string,
+  monthly_salary:string,
+  due_salary:number,
+  _id:string,
+  address?:string,
+}
 type Props={
     open:boolean,
     type:string,
     setOpen:Dispatch<SetStateAction<boolean>>,
     getTeachers:()=>void,
-    editParam:any,
+    editParam:TeacherDTO|null,
 }
 
-export const AddTeacherModal=({
+export default function AddTeacherModal({
     open,
     type,
     setOpen,
     getTeachers,
     editParam
 }:Props
-)=>{
+){
     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         const form=e.currentTarget;
         const formData=new FormData(form);
-         const data =  Object.fromEntries(formData.entries());; 
-        if(type==='add'){
-             await axios.post('/api/teacher',data)
-        .then(res=>{
-            if(res){
-                getTeachers();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }
-        else{         
-            await axios.patch(`/api/teacher?id=${editParam?._id}`,data)
-        .then(res=>{
-            if(res){
-                getTeachers();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }       
+         const data =  Object.fromEntries(formData.entries());
+         const method=type==='add'?'post':'patch';
+         const url=type==='add'?'/api/teacher':`/api/teacher?id=${editParam?._id}`;
+         try{
+            await axios({method,url, data});
+            getTeachers();
+            setOpen(false);
+            Notification.success(`Teacher has been ${type==='add'?'added':'updated'}`)
+         }
+         catch(err){
+            console.log(err);
+            Notification.error('Something went wrong!')
+         }    
     }
   return(
     <>

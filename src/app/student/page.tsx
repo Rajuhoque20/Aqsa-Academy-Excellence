@@ -1,11 +1,32 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { SearchInput } from 'src/components/SearchInput';
-import { AddStudentModal } from './AddStudent';
+const AddStudentModal= React.lazy(()=>import('./AddStudent'));
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
-import { DeleteStudent } from './DeleteStudent';
+const DeleteStudent =React.lazy(()=>import('./DeleteStudent'));
 import axios from 'axios';
 import { useRouter } from "next/navigation";
+import Loader from 'src/components/Loader/Loader';
+type StudentDTO={
+  name:string,
+  email:string,
+  gender:string,
+  current_class:string,
+  rollno:string,
+  regno?:string,
+  father_name?:string,
+  mother_name?:string,
+  dueFees?:string,
+  monthly_fees:string,
+  registration_fees:string,
+  _id?:string,
+  phone:string,
+  address:string
+}
+type DeleteDTO={
+  name:string,
+  id:string|undefined
+}
 
 const columns=["Name","Gender", "Class", "Reg No","Roll No", "Monthly Fees", "Reg Fees", "Due Fees","Action",];
 
@@ -14,9 +35,10 @@ export default function Student() {
   const [studentsData, setStudentsData]=useState([]);
   const [isEdit, setIsEdit]=useState(false);
   const [isDelete, setIsDelete]=useState(false);
-  const [deleteParam, setDeleteParam]=useState({name:'', id:''});
-  const [editParam, setEditParam]=useState();
+  const [deleteParam, setDeleteParam]=useState<DeleteDTO|null>(null);
+  const [editParam, setEditParam]=useState<StudentDTO|null>(null);
   const [searchKey, setSearchKey]=useState('');
+  const [loading, setLoading]=useState(true);
  
   const router=useRouter();
 
@@ -24,12 +46,13 @@ export default function Student() {
      axios.get('/api/students')
     .then(res=>{
       if(res){
-        console.log("Reeeesss",res)
         setStudentsData(res?.data);
+        setLoading(false);
       }
     })
     .catch(error=>{
-      console.log(error)
+      console.log(error);
+      setLoading(false);
     })
   }
 
@@ -37,7 +60,7 @@ export default function Student() {
    getStudents();
   },[]);
 
-  const searchData=!searchKey?studentsData:studentsData?.filter((item:any)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const searchData=!searchKey?studentsData:studentsData?.filter((item:StudentDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
@@ -56,7 +79,11 @@ export default function Student() {
           </tr>
         </thead>
         <tbody>
-          {searchData?.map((item:any)=>{
+          {loading?
+          <tr>
+            <td colSpan={12}><Loader/></td>
+          </tr>
+          :searchData?.map((item:StudentDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                 <td className="px-6 py-4 cursor-pointer" onClick={()=>{
@@ -85,7 +112,7 @@ export default function Student() {
           })}
         </tbody>
       </table>
-       <AddStudentModal open={open} type={"add"} setOpen={setOpen} getStudents={getStudents} editParam={{}}/>
+       <AddStudentModal open={open} type={"add"} setOpen={setOpen} getStudents={getStudents} editParam={null}/>
        <AddStudentModal open={isEdit} type='edit' setOpen={setIsEdit} getStudents={getStudents} editParam={editParam}/>
        <DeleteStudent open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getStudents={getStudents}/>
     </div>

@@ -1,56 +1,58 @@
 import axios from "axios";
-import { Dispatch, FormEvent, SetStateAction } from "react";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "src/components/Button";
-import { Modal } from "src/components/modal/Modal";
-
+import Notification from "src/components/Notification/Notifcation";
+const Modal=React.lazy(()=>import("src/components/modal/Modal"));
+type StudentDTO={
+  name:string,
+  email:string,
+  gender:string,
+  current_class:string,
+  rollno:string,
+  regno?:string,
+  father_name?:string,
+  mother_name?:string,
+  dueFees?:string,
+  monthly_fees:string,
+  registration_fees:string,
+  _id?:string,
+  phone:string,
+  address:string,
+}
 type Props={
     open:boolean,
     type:string,
     setOpen:Dispatch<SetStateAction<boolean>>,
     getStudents:()=>void,
-    editParam:any,
+    editParam:StudentDTO|null,
 }
 
-export const AddStudentModal=({
+export default function AddStudentModal({
     open,
     type,
     setOpen,
     getStudents,
     editParam
 }:Props
-)=>{
+){
     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         const form=e.currentTarget;
         const formData=new FormData(form);
         // const data = Object.fromEntries(formData.entries());
-        console.log("formData",formData);
-        if(type==='add'){
-             await axios.post('/api/students',formData)
-        .then(res=>{
-            if(res){
-                getStudents();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }
-        else{
-           
-            await axios.patch(`/api/students?id=${editParam?._id}`,formData)
-        .then(res=>{
-            if(res){
-                getStudents();
-                setOpen(false)
-            }
-        })
-        .catch(err=>{
-            console.log(err)
-        })
-        }
-        
+       const method=type==='add'?'post':'patch';
+       const url=type==='add'?'/api/students':`/api/students?id=${editParam?._id}`;
+       const data=formData;
+       try{
+            await axios({method, url,data});
+            getStudents();
+            setOpen(false)
+            Notification.success(`Student has been ${type==='add'?'added':'updated'}`);
+       }
+       catch(error){
+         console.log(error);
+         Notification.error('Something went wrong!');
+       }  
     }
   return(
     <>
@@ -116,13 +118,13 @@ export const AddStudentModal=({
                     type="text" placeholder="Enter Registration Fees" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="father_name">Father's Name</label>
+                    <label className="text-gray-700" htmlFor="father_name">Father&apos;s Name</label>
                     <input
                     defaultValue={type === 'edit' ? editParam?.father_name : ''}
                      required name="father_name" type="text" placeholder="Enter father's name" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <label className="text-gray-700" htmlFor="mother_name">Mother's Name</label>
+                    <label className="text-gray-700" htmlFor="mother_name">Mother&apos;s Name</label>
                     <input required name="mother_name"
                     defaultValue={type === 'edit' ? editParam?.mother_name : ''}
                      type="text" placeholder="Enter mother's name" className="text-gray-700 border-1 border-gray-500 px-5 py-2"/>

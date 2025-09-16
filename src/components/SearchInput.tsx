@@ -6,7 +6,7 @@ export const SearchInput = ({onChange}:{
 }) => {
   const [search, setSearch]=useState('');
   const [debounceSearch, setDebounceSearch]=useState('')
-  const handleSeach=(e)=>{
+  const handleSeach=(e:React.ChangeEvent<HTMLInputElement>)=>{
       setSearch(e.target.value);
   };
 

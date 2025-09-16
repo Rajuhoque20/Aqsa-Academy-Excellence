@@ -2,10 +2,13 @@
 import React, { useEffect, useState } from 'react'
 import { SearchInput } from 'src/components/SearchInput';
 
-import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
+import { Button, DeleteButton, EditButton } from 'src/components/Button';
 import { DeleteStudent } from './DeleteStudent';
 import axios from 'axios';
-import { useRouter } from "next/navigation";
+import { ConfirmModal } from 'src/components/confirmModal/ConfirmModal';
+import CheckBox from 'src/components/Checkbox/Checkbox';
+import Notification from 'src/components/Notification/Notifcation';
+import Loader from 'src/components/Loader/Loader';
 
 const columns=[
  {title: "Name", width:'15rem'},
@@ -22,59 +25,154 @@ const columns=[
  {title: "Action", width:'10rem'},
   ];
 
+  interface SelectDTO{
+    name:string,
+  }
+  type CandidateDTO={
+    _id:string,
+    name:string,
+    email:string,
+    phone:string,
+    father_name?:string,
+    mother_name?:string,
+    address:string,
+    marksSheet?:string,
+    school:string,
+    marks:string,
+    class:string,
+    gender?:string
+  };
 export default function Student() {
   const [open, setOpen]=useState<boolean>(false);
   const [studentsData, setStudentsData]=useState([]);
-  const [isEdit, setIsEdit]=useState(false);
   const [isDelete, setIsDelete]=useState(false);
   const [deleteParam, setDeleteParam]=useState({name:'', id:''});
-  const [editParam, setEditParam]=useState();
+  const [selectParam, setSelectParam]=useState<null|SelectDTO>(null);
   const [searchKey, setSearchKey]=useState('');
- 
-  const router=useRouter();
+  const [loading, setLoading]=useState(false);
+  const [isAllSelected, setIsAllSelected]=useState(false);
+  const [selectedCandidates, setSelectedCandidates]=useState<string[]>([]);
 
-  const getStudents=()=>{
+  const getCandidates=()=>{
      axios.get('/api/newStudentRegistration')
     .then(res=>{
       if(res){
-        console.log("Reeeesss",res)
         setStudentsData(res?.data);
+        setLoading(false);
       }
     })
     .catch(error=>{
-      console.log(error)
+      console.log(error);
+      setLoading(false);
     })
   }
 
   useEffect(()=>{
-   getStudents();
+   getCandidates();
   },[]);
 
-  const searchData=!searchKey?studentsData:studentsData?.filter((item:any)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const searchData=!searchKey?studentsData:studentsData?.filter((item:CandidateDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+const handleSelect=async()=>{
+  try{
+    setLoading(true);
+    const method='post';
+    const url='/api/newStudentRegistration';
+    await axios({method,url,data:{...selectParam, type:'SELECT'}});
+    getCandidates();
+     Notification.success("Candidate has registered as student!");
+  }
+  catch(error){
+    Notification.error('Something went wrong!');
+    console.log(error)
+  }
+  finally{
+    setOpen(false);
+    setLoading(false);
+  }
+  
+}
+
+const handleCheckedCandidates=(id:string, type:string)=>{
+  if(type==='add'){
+    setSelectedCandidates(prev=>prev.includes(id)?prev:[...prev,id]);
+  }
+  else{
+    setSelectedCandidates(prev=>prev.filter(el=>el!==id));
+  }
+}
+
+const registerAllSelectedCandidatesAsStudents=async()=>{
+  const method='post';
+  const url='/api/newStudentRegistration/register-as-students';
+  const data=selectedCandidates;
+  try{
+    await axios({method, url, data});
+    getCandidates();
+    setSelectedCandidates([]);
+     Notification.success("Selected candidates have registered as students!");
+  }
+  catch(error){
+    console.log(error);
+     Notification.error('Something went wrong!');
+  }
+}
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
       <div className='flex items-center justify-between'>
          <h1 className='text-2xl font-semibold text-white'>Candidates</h1>
          <div className='flex items-center gap-5'>
+            {selectedCandidates.length>0&&<Button type='primary' title='Select' onClick={registerAllSelectedCandidatesAsStudents}/>}
               <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
-               {/* <AddButton onClick={()=>setOpen(true)} title='Add Student'/>                      */}
          </div>
       </div>
       <div className="overflow-x-auto">
       <table className="w-full table-fixed text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-              {columns?.map(item=><th key={item.title} scope="col" className={`px-6 py-3`} style={{ width: item.width }}>{item.title}</th >)}
+              {columns?.map((item,index)=><th key={item.title} scope="col" className={`px-6 py-3`} style={{ width: item.width }}>
+              
+                {index===0?<div className='flex item-center gap-5'>
+                  <CheckBox checked={isAllSelected} onChange={(e)=>{
+                    setIsAllSelected(e.target.checked);
+                    if(e.target.checked){
+                      setSelectedCandidates(searchData?.map((item:CandidateDTO)=>item._id));
+                    }
+                    else{
+                      setSelectedCandidates([]);
+                    }
+                    
+                  }}/>
+                  <p> {item.title}</p>
+                </div>:
+                <p>{item.title}</p>}
+                </th >)}
           </tr>
         </thead>
         <tbody>
-          {searchData?.map((item:any)=>{
+           {loading?
+          <tr>
+            <td colSpan={12}><Loader/></td>
+          </tr>:
+            searchData?.length>0?
+          searchData?.map((item:CandidateDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                <td className="px-6 py-4 cursor-pointer" onClick={()=>{
-                   router.push(`/student/${item._id}`);
-                }}>{item.name}</td>
+                <td className="px-6 py-4 cursor-pointer" >
+                  <div className='flex item-center gap-5'>
+                    <CheckBox checked={selectedCandidates?.includes(item._id)} onChange={(e)=>{
+                      if(e.target.checked){
+                         handleCheckedCandidates(item?._id,'add');
+                      }
+                      else
+                      {
+                         handleCheckedCandidates(item?._id,'remove');
+                      }
+                     
+                    }}/>
+                    <p> {item.name}</p>
+                  </div>
+                 </td>
                 <td className="px-6 py-4">{item.email}</td>
                   <td className="px-6 py-4">{item.phone}</td>
                    <td className="px-6 py-4">{item.gender}</td>
@@ -90,9 +188,12 @@ export default function Student() {
                     
                     </td>
                 <td className="px-6 py-4 flex items-center gap-2">
-                  <EditButton onClick={()=>{setIsEdit(true);
-                    setEditParam(item);
-                  }}/>
+                  <EditButton onClick={()=>{
+                    setSelectParam(item);
+                    setOpen(true);
+                  }}
+                  title='Select'
+                  />
                   <DeleteButton onClick={()=>{
                     setIsDelete(true);
                     setDeleteParam({name:item?.name, id:item?._id});
@@ -101,14 +202,31 @@ export default function Student() {
                 </td>
               </tr>
             )
-          })}
+          }):
+          <tr>
+            <td  colSpan={12} className="text-center py-4">
+              <p>No Candidates found!</p>
+            </td>
+          </tr>
+        }
         </tbody>
       </table>
       </div>
-       <DeleteStudent open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getStudents={getStudents}/>
+       <DeleteStudent open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getCandidates={getCandidates}/>
+       <ConfirmModal
+       open={open}
+       setOpen={setOpen}
+       onConfirm={handleSelect}
+       title={"Select Candidate"}
+       loading={loading}
+       >
+        <p>You are sure, you want to select the candidate, <b>{selectParam?.name}</b>?</p>
+       </ConfirmModal>
     </div>
   )
 }
+
+
 
 
 

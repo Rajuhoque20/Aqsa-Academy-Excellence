@@ -9,6 +9,7 @@ import { ConfirmModal } from 'src/components/confirmModal/ConfirmModal';
 import CheckBox from 'src/components/Checkbox/Checkbox';
 import Notification from 'src/components/Notification/Notifcation';
 import Loader from 'src/components/Loader/Loader';
+import { useDebounce } from 'src/components/customHooks/useDeboune';
 
 const columns=[
  {title: "Name", width:'15rem'},
@@ -44,20 +45,24 @@ const columns=[
   };
 export default function Student() {
   const [open, setOpen]=useState<boolean>(false);
-  const [studentsData, setStudentsData]=useState([]);
+  const [candidatesData, setCandidatesData]=useState([]);
   const [isDelete, setIsDelete]=useState(false);
+  const [isAllSelectModal, setIsAllSelectModal]=useState(false);
   const [deleteParam, setDeleteParam]=useState({name:'', id:''});
   const [selectParam, setSelectParam]=useState<null|SelectDTO>(null);
   const [searchKey, setSearchKey]=useState('');
   const [loading, setLoading]=useState(false);
   const [isAllSelected, setIsAllSelected]=useState(false);
   const [selectedCandidates, setSelectedCandidates]=useState<string[]>([]);
+  const [searchData, setSearchData]=useState([]);
+  const {debounceFetch}=useDebounce(candidatesData, setSearchData,'name');
 
   const getCandidates=()=>{
      axios.get('/api/newStudentRegistration')
     .then(res=>{
       if(res){
-        setStudentsData(res?.data);
+        setCandidatesData(res?.data);
+        setSearchData(res?.data);
         setLoading(false);
       }
     })
@@ -71,7 +76,10 @@ export default function Student() {
    getCandidates();
   },[]);
 
-  const searchData=!searchKey?studentsData:studentsData?.filter((item:CandidateDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
 const handleSelect=async()=>{
   try{
     setLoading(true);
@@ -109,11 +117,13 @@ const registerAllSelectedCandidatesAsStudents=async()=>{
     await axios({method, url, data});
     getCandidates();
     setSelectedCandidates([]);
-     Notification.success("Selected candidates have registered as students!");
+    Notification.success("Selected candidates have registered as students!");
+    setIsAllSelectModal(false);
+    setIsAllSelected(false);
   }
   catch(error){
     console.log(error);
-     Notification.error('Something went wrong!');
+    Notification.error('Something went wrong!');
   }
 }
 
@@ -122,8 +132,8 @@ const registerAllSelectedCandidatesAsStudents=async()=>{
       <div className='flex items-center justify-between'>
          <h1 className='text-2xl font-semibold text-white'>Candidates</h1>
          <div className='flex items-center gap-5'>
-            {selectedCandidates.length>0&&<Button type='primary' title='Select' onClick={registerAllSelectedCandidatesAsStudents}/>}
-              <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
+            {selectedCandidates.length>0&&<Button type='primary' title='Register as Students' onClick={()=>setIsAllSelectModal(true)}/>}
+              <SearchInput onChange={handleChange} value={searchKey}/>
          </div>
       </div>
       <div className="overflow-x-auto">
@@ -192,7 +202,7 @@ const registerAllSelectedCandidatesAsStudents=async()=>{
                     setSelectParam(item);
                     setOpen(true);
                   }}
-                  title='Select'
+                  title='Register'
                   />
                   <DeleteButton onClick={()=>{
                     setIsDelete(true);
@@ -214,13 +224,17 @@ const registerAllSelectedCandidatesAsStudents=async()=>{
       </div>
        <DeleteStudent open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} getCandidates={getCandidates}/>
        <ConfirmModal
-       open={open}
-       setOpen={setOpen}
-       onConfirm={handleSelect}
-       title={"Select Candidate"}
+       open={open||isAllSelectModal}
+       setOpen={isAllSelectModal?setIsAllSelectModal:setOpen}
+       onConfirm={isAllSelectModal?registerAllSelectedCandidatesAsStudents:handleSelect}
+       title={"Register as Students"}
        loading={loading}
        >
-        <p>You are sure, you want to select the candidate, <b>{selectParam?.name}</b>?</p>
+        {isAllSelectModal
+        ?
+        <p>You are sure, you want to register  the seleted candidates as students,?</p>
+        :
+        <p>You are sure, you want to register the candidate, <b>{selectParam?.name}</b> as student?</p>}
        </ConfirmModal>
     </div>
   )

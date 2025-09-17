@@ -13,11 +13,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 40%;
+  width: 28.5rem;
 }
 .title {
   color: #fff;
-  font-size: 1rem;
+  font-size: 1.5rem;
 }
 .title span {
   font-weight: 600;

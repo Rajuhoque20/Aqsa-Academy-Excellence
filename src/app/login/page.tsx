@@ -3,9 +3,11 @@ import React, { FormEvent, useState } from 'react'
 import classes from './style.module.css';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { ErrorMessage } from 'src/utility/errorMessage';
+import Notification from 'src/components/Notification/Notifcation';
 export default function LoginPage() {
-  const [error, setError]=useState('')
-    const router=useRouter();
+  const router=useRouter();
+  const [loading, setLoading]=useState(false);
    
   return (
     <div className={classes.container}>
@@ -25,20 +27,24 @@ export default function LoginPage() {
             const username = formData.get("username") as string;
             const password = formData.get("password") as string;
             const params = { username, password };
+            setLoading(true);
             try{
+
               const res=await signIn('credentials',{
                 ...params,
                 redirect:false,
               });
+              setLoading(false);
               if(res?.error){
-                setError('Invalid crendetails');
+                Notification.error('Invalid crendetails!');
                 return;
               }
                router.push("/student");
 
             }
             catch(error){
-              console.log(error)
+              ErrorMessage(error);
+              setLoading(false);
             }                  
           }}
           className={classes.form}
@@ -68,9 +74,8 @@ export default function LoginPage() {
               placeholder="Enter password"
             />
           </div>
-          {error&&<p className='color-red-600 my-5'>{error}</p>}
-          <button type="submit" className={classes.button_confrim}>
-            CONFIRM
+          <button type="submit" disabled={loading} className={`${classes.button_confrim} hover:scale-105 transition`}>
+            {loading?'CONFIRMING...':'CONFIRM'}
           </button>
         </form>
       </section>

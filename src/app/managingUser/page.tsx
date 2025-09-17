@@ -5,6 +5,7 @@ import { SearchInput } from 'src/components/SearchInput';
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 import axios from 'axios';
 import Loader from 'src/components/Loader/Loader';
+import { useDebounce } from 'src/components/customHooks/useDeboune';
 const DeleteManagingUser =React.lazy(()=>import('./deleteManagingUser'));
 const AddManagingUserModal=React.lazy(()=>import('./addManagingUser'))
 const columns=["Name","Gender", "email", "Phone","Role","Action",];
@@ -30,7 +31,8 @@ export default function ManagingUser() {
   const [editParam, setEditParam]=useState<ManagingUserDTO|null>(null);
   const [searchKey, setSearchKey]=useState('');
   const [loading, setLoading]=useState(true);
-
+  const [searchData, setSearchData]=useState<ManagingUserDTO[]>([]);
+   const {debounceFetch}=useDebounce(managingUsersData, setSearchData,'name');
 
   const getManagingUsers=()=>{
      axios.get('/api/managingUser')
@@ -38,6 +40,7 @@ export default function ManagingUser() {
       if(res){
         setmanagingUsersData(res?.data);
         setLoading(false);
+        setSearchData(res?.data);
       }
     })
     .catch(error=>{
@@ -50,14 +53,17 @@ export default function ManagingUser() {
    getManagingUsers();
   },[]);
 
-  const searchData=!searchKey?managingUsersData:managingUsersData?.filter((item:ManagingUserDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
       <div className='flex items-center justify-between'>
          <h1 className='text-2xl font-semibold text-white'>Managing Users</h1>
          <div className='flex items-center gap-5'>
-              <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
+              <SearchInput onChange={handleChange} value={searchKey}/>
                <AddButton onClick={()=>setOpen(true)} title={"Add Managing User"}/>                     
          </div>
       </div>

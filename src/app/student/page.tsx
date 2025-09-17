@@ -7,6 +7,8 @@ const DeleteStudent =React.lazy(()=>import('./DeleteStudent'));
 import axios from 'axios';
 import { useRouter } from "next/navigation";
 import Loader from 'src/components/Loader/Loader';
+import { useDebounce } from 'src/components/customHooks/useDeboune';
+import { FaHandPointRight } from "react-icons/fa";
 type StudentDTO={
   name:string,
   email:string,
@@ -39,6 +41,8 @@ export default function Student() {
   const [editParam, setEditParam]=useState<StudentDTO|null>(null);
   const [searchKey, setSearchKey]=useState('');
   const [loading, setLoading]=useState(true);
+  const [searchData, setSearchData]=useState([]);
+  const {debounceFetch}=useDebounce(studentsData, setSearchData,'name');
  
   const router=useRouter();
 
@@ -47,6 +51,7 @@ export default function Student() {
     .then(res=>{
       if(res){
         setStudentsData(res?.data);
+        setSearchData(res?.data);
         setLoading(false);
       }
     })
@@ -60,14 +65,18 @@ export default function Student() {
    getStudents();
   },[]);
 
-  const searchData=!searchKey?studentsData:studentsData?.filter((item:StudentDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
+
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
       <div className='flex items-center justify-between'>
          <h1 className='text-2xl font-semibold text-white'>Students</h1>
          <div className='flex items-center gap-5'>
-              <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
+              <SearchInput onChange={handleChange} value={searchKey}/>
                <AddButton onClick={()=>setOpen(true)} title='Add Student'/>                     
          </div>
       </div>
@@ -83,12 +92,24 @@ export default function Student() {
           <tr>
             <td colSpan={12}><Loader/></td>
           </tr>
-          :searchData?.map((item:StudentDTO)=>{
+          :
+          searchData?.length===0?
+           <tr>
+            <td colSpan={12}>
+              <div className="flex items-center justify-center w-full text-center h-[5rem]">
+                <p>No data found!</p>
+            </div>
+            </td>
+          </tr> 
+          :
+          searchData?.map((item:StudentDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                <td className="px-6 py-4 cursor-pointer" onClick={()=>{
+                <td className="px-6 py-4 cursor-pointer flex items-center gap-3 font-semibold text-blue-300 hover:scale-110 transition hover:underline" onClick={()=>{
                    router.push(`/student/${item._id}`);
-                }}>{item.name}</td>
+                }}>{item.name}
+                <FaHandPointRight size={20}/>
+                </td>
                 <td className="px-6 py-4">{item.gender}</td>
                   <td className="px-6 py-4">{item.current_class}</td>
                 <td className="px-6 py-4">{item.regno}</td>

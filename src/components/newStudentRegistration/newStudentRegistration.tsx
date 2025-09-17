@@ -3,6 +3,7 @@ const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 import { Button } from '../Button';
 import axios from 'axios';
 import Notification from '../Notification/Notifcation';
+import { ErrorMessage } from 'src/utility/errorMessage';
 
 type Props={
     open:boolean,
@@ -31,11 +32,7 @@ export default function NewStudentRegistration  ({
             }
         }
         catch(error){
-           if (axios.isAxiosError(error)) {
-                Notification.error(error.response?.data?.message ?? "Something went wrong!");
-            } else {
-                Notification.error("Unexpected error occurred!");
-            }
+          ErrorMessage(error);
         }
         finally{
             setLoading(false);

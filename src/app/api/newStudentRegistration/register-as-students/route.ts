@@ -11,16 +11,22 @@ export async function POST(req: NextRequest) {
       NewStudentRegistration.find(),
     ]);
 
+    const classCounts:Record<string, number>={};
+    for (const student of students) {
+      const cur_class=student.current_class;
+      const roll=student.rollno;
+      if(!classCounts[cur_class]||roll>classCounts[cur_class]){
+        classCounts[cur_class]=Number(roll);
+      }
+    }
+
     for (const id of regData) {
       const candidate = candidates.find((el) => el._id.toString() === id);
       if (!candidate) continue;
 
       const year = new Date().getFullYear();
-      const studentWithSameClass = students.filter(
-        (s) => s.current_class === candidate.class
-      );
-
-      const nextCount = studentWithSameClass.length + 1;
+      classCounts[candidate.class]=( classCounts[candidate.class]??0)+1;
+      const nextCount =  classCounts[candidate.class];
       const regno = `${candidate.class}${year}${
         nextCount > 9 ? nextCount : `0${nextCount}`
       }`;

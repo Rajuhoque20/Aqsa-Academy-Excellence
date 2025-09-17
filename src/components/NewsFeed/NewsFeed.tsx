@@ -56,7 +56,7 @@ export const NewsFeed=()=>{
                      const year=format?.[0];
                     return(
                         <div key={index} className="bg-white p-5 rounded-md shadow-md flex gap-2 items-center transition hover:scale-105">
-                            <div className="p-5 flex flex-col items-center bg-gray-800 text-white w-1/4 justify-center">
+                            <div className="p-5 flex flex-col items-center bg-gray-800 text-white w-1/4 justify-center"  style={{clipPath: 'circle(55%)'}}>
                                 <h3>{day}</h3>
                                 <span>{month+", "+year}</span>
                             </div>

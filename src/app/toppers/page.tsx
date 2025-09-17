@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, } from "react";
 import { SearchInput } from "src/components/SearchInput";
 import { AddButton, DeleteButton, EditButton } from "src/components/Button";
 import axios from "axios";
@@ -8,6 +8,8 @@ const AddTopperModal= React.lazy(()=>import("./addToppers"));
 const DeleteTopper= React.lazy(()=>import("./deleteToppers"));
 import Image from "next/image";
 import Loader from "src/components/Loader/Loader";
+
+import { useDebounce } from "src/components/customHooks/useDeboune";
 
 type Topper = {
   _id: string;
@@ -27,6 +29,7 @@ type ModalDTO={
 export default function Toppers() {
   const [toppersData, setToppersData] = useState<Topper[]>([]);
   const [searchKey, setSearchKey] = useState("");
+   const [searchData, setSearchData]=useState<Topper[]>([]);
 
   const [modal, setModal] = useState<ModalDTO>({ add: false, edit: false, delete: false });
 
@@ -36,12 +39,14 @@ export default function Toppers() {
     id: "",
   });
   const [loading, setLoading]=useState(true);
+  const {debounceFetch}=useDebounce(toppersData, setSearchData,'name');
 
   const getToppers = async () => {
     try {
       const res = await axios.get("/api/topper");
       setToppersData(res.data);
       setLoading(false);
+      setSearchData(res.data);
     } catch (error) {
       console.error("Failed to fetch toppers:", error);
       setLoading(false);
@@ -52,12 +57,12 @@ export default function Toppers() {
     getToppers();
   }, []);
 
-  const searchData = useMemo(() => {
-    if (!searchKey.trim()) return toppersData;
-    return toppersData.filter((item) =>
-      item.name.toLowerCase().includes(searchKey.trim().toLowerCase())
-    );
-  }, [searchKey, toppersData]);
+
+
+const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
 
   return (
     <div className="w-full flex text-black flex-col gap-5">
@@ -65,7 +70,7 @@ export default function Toppers() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">Toppers</h1>
         <div className="flex items-center gap-5">
-          <SearchInput onChange={setSearchKey} value={searchKey} />
+          <SearchInput onChange={handleChange} value={searchKey} />
           <AddButton onClick={() => setModal((m) => ({ ...m, add: true }))} title="Add Toppers" />
         </div>
       </div>

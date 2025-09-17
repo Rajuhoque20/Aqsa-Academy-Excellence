@@ -4,6 +4,8 @@ import Carousel from "../Carousel/Carousel"
 import Link from "next/link"
 import  './Home.css'
 import { TabCard } from "./TabCard"
+import { FaNewspaper, FaStar, FaUserGraduate, FaMapMarkerAlt  } from "react-icons/fa";
+
 const banners=[
     {
           img:'/bg_banner_1.jpg',
@@ -24,16 +26,19 @@ const tabs=[
         title:"News",
         id:'news',
         bg:'bg-red-700',
+        icon:<FaNewspaper size={40}/>
     },
      {
         title:"Our Toppers",
         id:'toppers',
         bg:'bg-blue-700',
+        icon:<FaUserGraduate size={40}/>
     },
      {
         title:"Why Aqsa",
         id:'about',
         bg:'bg-gray-800',
+        icon:<FaStar size={40}/>
     },
 ];
 
@@ -62,19 +67,26 @@ export const BannerHome=()=>{
                             </div>
                             <div className='flex flex-col'>
                                 <span className='text-3xl'>AQSA ACADEMY OF EXCELLENCE</span>
-                                <span className='text-sm'> An Institute of Eminence (for Girls Students)</span>
+                                <span className='text-sm'> An Institute of Eminence ( for Girls Students )</span>
                             </div>
 
-                            <div className="flex flex-col self-end ml-auto location">
-                                <span className="text-yellow-400 text-xl">Location</span>
-                                <span>Takagach, Cooch Behar-736145</span>
+                            <div className="flex flex-col self-end ml-auto gap-2">
+                                <div className="flex items-center gap-3">
+                                    <FaMapMarkerAlt size={30}/>
+                                     <span className="text-yellow-400 text-xl"
+                                     style={{ textShadow: "2px 4px 8px rgba(0,0,0,0.8)" }}
+                                     >Location:</span>
+                                </div>                              
+                                <span className="text-green-200"
+                                  style={{ textShadow: "2px 4px 8px rgba(0,0,0,0.8)" }}
+                                >Takagach, Cooch Behar-736145</span>
                                 
-                                <Link className="text-blue-500 underline decoration-dotted" href='https://www.google.com/maps/place/Cooch+Behar+Rajbari+Park/@26.3281508,89.4361229,17z/data=!3m1!4b1!4m6!3m5!1s0x39e2fe811fc784f1:0xd8ba085180bfd037!8m2!3d26.328146!4d89.4386978!16s%2Fg%2F11fx8gllz6?entry=ttu&g_ep=EgoyMDI1MDcxNi4wIKXMDSoASAFQAw%3D%3D'>View Map</Link>
+                                <Link style={{ textShadow: "2px 4px 8px rgba(0,0,0,0.8)" }} className="text-blue-500 underline decoration-dotted hover:scale-110 transition" href='https://www.google.com/maps/place/Cooch+Behar+Rajbari+Park/@26.3281508,89.4361229,17z/data=!3m1!4b1!4m6!3m5!1s0x39e2fe811fc784f1:0xd8ba085180bfd037!8m2!3d26.328146!4d89.4386978!16s%2Fg%2F11fx8gllz6?entry=ttu&g_ep=EgoyMDI1MDcxNi4wIKXMDSoASAFQAw%3D%3D'>View Map</Link>
                             </div>
 
                         </div>
-                        <div className='absolute bottom-[-5rem] left-0 flex justify-center w-full h-[200px]'>
-                            <div className='h-full flex gap-5'>
+                        <div className='absolute bottom-[-1rem] left-0 flex justify-center w-full h-[150px]'>
+                            <div className='h-full flex'>
                                 {tabs?.map(item=>{
                                     return(
                                         <TabCard item={item} key={item.id}/>

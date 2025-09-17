@@ -3,7 +3,7 @@ import { Overview } from "../Overview/Overview"
 
 export const AboutUs=()=>{
     return(
-        <div className="flex flex-col gap-5 px-30 mb-30" id="about">
+        <div className="flex flex-col gap-5 px-30 my-30" id="about">
             <h2 className="text-black text-5xl">About Us</h2>
             <h2 className="text-black text-3xl mt-5">Why Al-Aqsa?</h2>
             <span className="text-gray-700">Academic excellence with a religious atmosphere, this has been the mission of Al Aqsa Mission, the pioneer Muslim educational institution in West Bengal since 2008. Its main campus is situated in Cooch Behar. Al-Aqsa Mission has tried to achieve quality and excellence in the field of education following the principles of fairness, equity, equality and transparency with preferences to the poor and meritorious students. Al-Aqsa defines its objectives as promoting quality education among the poor and backward class minorities of the society and developing the socio-economic condition of the Muslims.

@@ -1,33 +1,43 @@
 'use client'
 import React, { useState } from 'react'
-import Dropdown from './../Dropdown/Dropdown';
+import { FaHome } from "react-icons/fa"; 
 import './Header.css';
 import { signOut, useSession } from 'next-auth/react';
 import { LogOut } from 'lucide-react';
 import Image from 'next/image';
-const NewStudentRegistration=React.lazy(()=>import('../newStudentRegistration/newStudentRegistration'))
+import { FaInfoCircle } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaComments } from "react-icons/fa";
+import { Button } from '../Button';
+import { usePathname, useRouter } from 'next/navigation';
+const NewStudentRegistration=React.lazy(()=>import('../newStudentRegistration/newStudentRegistration'));
  const links=[
       {
         title:"Home",
         id:'home',
+        icon:<FaHome size={20}/>
       },
        {
         title:"About",
         id:'about',
+        icon:<FaInfoCircle size={20}/>
       },
        {
         title:"Contact",
         id:'contact',
+        icon:<FaComments size={20}/>
       }
     ]
 export default function Header() {
-  const [value, setValue]=useState('English');
    const [open,setOpen]=useState(false);
     const {data}=useSession();
-
-    console.log("datadata",data)
+    const pathname = usePathname();
+    const router=useRouter();
 
     const handleClick=(id:string)=>{
+      if(pathname==='/login'){
+        router.push('/');
+        return;
+      }
       const el=document.querySelector(`#${id}`);
       el?.scrollIntoView({
         behavior:"smooth",
@@ -46,9 +56,12 @@ export default function Header() {
           </div>
         <span className='text-2xl'>Welcome to Aqsa Academy of Excelence!</span>
         </div>
-        :<div className='flex gap-5'>
+        :<div className='flex gap-8'>
           {links?.map(item=>{
-            return <button key={item.id} className='cursor-pointer' onClick={()=>handleClick(item.id)}>{item.title}</button>
+            return <button key={item.id} className='cursor-pointer flex gap-2 items-center hover:scale-110 hover:text-blue-300 hover:underline transition' onClick={()=>handleClick(item.id)}>
+              {item.icon}
+              {item.title}
+              </button>
           })}
          
         </div>}
@@ -72,18 +85,16 @@ export default function Header() {
        
         </div>
         :
-        <div className='ml-auto mr-10 gap-5 flex items-center'>    
-           
-              <button onClick={()=>setOpen(true)} className='bg-gray-800 text-green-500 px-5 py-2 rounded-md cursor-pointer'> New Student Registration</button>
-           
-          <Dropdown 
-          value={value}
-          setValue={setValue}
-          options={[
-            {label:"English", value:"English"},
-            {label:"Bengali", value:"Bengali"}
-          ]}
-          />
+        <div className='ml-auto gap-5 flex items-center'> 
+            <div className='flex items-center gap-3 text-yellow-400'>
+              <FaPhone size={20}/>
+              <h3>+91 7047082113</h3>  
+            </div>
+            <div className='flex items-center gap-3 text-orange-400'>
+              <FaEnvelope size={20}/>
+            <h3>raju.hoque97@gmail.com</h3> 
+            </div>        
+            <Button type='primary' onClick={()=>setOpen(true)} title='Apply to Register'/>
         </div>
        
         }

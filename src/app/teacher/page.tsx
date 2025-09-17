@@ -6,6 +6,8 @@ import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
 import Loader from 'src/components/Loader/Loader';
+import { useDebounce } from 'src/components/customHooks/useDeboune';
+import { FaHandPointRight } from 'react-icons/fa';
 const AddTeacherModal =React.lazy(()=>import('./addTeacher'));
 const DeleteTeacher =React.lazy(()=>import('./deleteTeacher'));
 
@@ -23,7 +25,7 @@ interface TeacherDTO{
 
 export default function Teacher() {
   const [open, setOpen]=useState<boolean>(false);
-  const [teachersData, setTeachersData]=useState([]);
+  const [teachersData, setTeachersData]=useState<TeacherDTO[]>([]);
   const [isEdit, setIsEdit]=useState(false);
   const [isDelete, setIsDelete]=useState(false);
   const [deleteParam, setDeleteParam]=useState({name:'', id:''});
@@ -31,12 +33,15 @@ export default function Teacher() {
   const [searchKey, setSearchKey]=useState('');
   const [loading, setLoading]=useState(true);
   const router=useRouter();
+  const [searchData, setSearchData]=useState<TeacherDTO[]>([])
+   const {debounceFetch}=useDebounce(teachersData, setSearchData,'name');
 
   const getTeachers=()=>{
      axios.get('/api/teacher')
     .then(res=>{
       if(res){
         setTeachersData(res?.data);
+        setSearchData(res?.data);
         setLoading(false);
       }
     })
@@ -50,14 +55,18 @@ export default function Teacher() {
    getTeachers();
   },[]);
 
-  const searchData=!searchKey?teachersData:teachersData?.filter((item:TeacherDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
+
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
       <div className='flex items-center justify-between'>
          <h1 className='text-2xl font-semibold text-white'>Teachers</h1>
          <div className='flex items-center gap-5'>
-              <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
+              <SearchInput onChange={handleChange} value={searchKey}/>
                <AddButton onClick={()=>setOpen(true)} title={"Add Teacher"}/>                     
          </div>
       </div>
@@ -86,9 +95,11 @@ export default function Teacher() {
           searchData?.map((item:TeacherDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                <td className="px-6 py-4 cursor-pointer" onClick={()=>{
+                <td className="px-6 py-4 cursor-pointer flex items-center gap-3 font-semibold text-blue-300 hover:scale-110 transition hover:underline" onClick={()=>{
                    router.push(`/teacher/${item._id}`);
-                }}>{item.name}</td>
+                }}>{item.name}
+                 <FaHandPointRight size={20}/>
+                </td>
                 <td className="px-6 py-4">{item.gender}</td>
                   <td className="px-6 py-4">{item.email}</td>
                 <td className="px-6 py-4">{item.phone}</td>

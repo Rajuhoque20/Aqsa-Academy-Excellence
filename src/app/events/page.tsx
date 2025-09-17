@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { SearchInput } from 'src/components/SearchInput'
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button'
 import axios from 'axios'
@@ -7,6 +7,7 @@ const AddEventModal= React.lazy(()=>import('./addEvents'));
 const DeleteEvents= React.lazy(()=>import('./deleteEvents'));
 import Image from 'next/image'
 import Loader from 'src/components/Loader/Loader'
+import { useDebounce } from 'src/components/customHooks/useDeboune'
 
 interface EventItem {
   _id: string
@@ -32,12 +33,15 @@ export default function Events() {
     id: '',
   });
   const [loading, setLoading]=useState(true);
+  const [searchData, setSearchData]=useState<EventItem[]>([]);
+  const {debounceFetch}=useDebounce(eventsData, setSearchData,'title');
 
   // ✅ Fetch Events
   const getEvents = useCallback(async () => {
     try {
       const res = await axios.get('/api/event')
       setEventsData(res.data || []);
+      setSearchData(res.data||[]);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -49,13 +53,6 @@ export default function Events() {
     getEvents()
   }, [getEvents])
 
-  // ✅ Memoized Search
-  const searchData = useMemo(() => {
-    if (!searchKey) return eventsData
-    return eventsData.filter((item) =>
-      item.title?.toLowerCase().includes(searchKey.trim().toLowerCase())
-    )
-  }, [searchKey, eventsData])
 
   // ✅ Handlers
   const handleEdit = (item: EventItem) => {
@@ -67,6 +64,10 @@ export default function Events() {
     setDeleteParam({ name: item.title, id: item._id })
     setModal((m) => ({ ...m, delete: true }))
   }
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
 
   return (
     <div className="w-full flex text-black flex-col gap-5">
@@ -74,7 +75,7 @@ export default function Events() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">Events</h1>
         <div className="flex items-center gap-5">
-          <SearchInput onChange={setSearchKey} value={searchKey} />
+          <SearchInput onChange={handleChange} value={searchKey} />
           <AddButton
             onClick={() => setModal((m) => ({ ...m, add: true }))}
             title="Add Events"

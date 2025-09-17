@@ -6,6 +6,8 @@ import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
 import Loader from 'src/components/Loader/Loader';
+import { useDebounce } from 'src/components/customHooks/useDeboune';
+import { FaHandPointRight } from 'react-icons/fa';
 const AddStuffModal = React.lazy(()=>import('./AddStuff'));
 const DeleteStuff = React.lazy(()=>import('./DeleteStuff'));
 
@@ -25,7 +27,7 @@ interface DeleteDTO{
   id?:string|undefined
 }
 
-export default function Stuff() {
+export default function Staff() {
   const [open, setOpen]=useState<boolean>(false);
   const [stuffData, setStuffData]=useState([]);
   const [isEdit, setIsEdit]=useState(false);
@@ -34,12 +36,15 @@ export default function Stuff() {
   const [editParam, setEditParam]=useState<StuffDTO|null>(null);
   const [searchKey, setSearchKey]=useState('');
   const [loading, setLoading]=useState(true);
+  const [searchData,setSearchData]=useState([]);
+   const {debounceFetch}=useDebounce(stuffData, setSearchData,'name');
   const router=useRouter();
   const getStuff=()=>{
      axios.get('/api/stuff')
     .then(res=>{
       if(res){
         setStuffData(res?.data);
+        setSearchData(res?.data);
         setLoading(false);
       }
     })
@@ -53,15 +58,19 @@ export default function Stuff() {
    getStuff();
   },[]);
 
-  const searchData=!searchKey?stuffData:stuffData?.filter((item:StuffDTO)=>item?.name?.toLowerCase()?.includes(searchKey?.trim()?.toLowerCase()))
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
+
 
   return (
     <div className='w-full flex text-black flex-col gap-2' >
       <div className='flex items-center justify-between'>
-         <h1 className='text-2xl font-semibold text-white'>Support Stuff</h1>
+         <h1 className='text-2xl font-semibold text-white'>Support Staff</h1>
          <div className='flex items-center gap-5'>
-              <SearchInput onChange={(value:string)=>setSearchKey(value)} value={searchKey}/>
-               <AddButton onClick={()=>setOpen(true)} title={"Add stuff"}/>                     
+              <SearchInput onChange={handleChange} value={searchKey}/>
+               <AddButton onClick={()=>setOpen(true)} title={"Add staff"}/>                     
          </div>
       </div>
       
@@ -89,9 +98,11 @@ export default function Stuff() {
           searchData?.map((item:StuffDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                <td className="px-6 py-4 cursor-pointer" onClick={()=>{
+                <td className="px-6 py-4 cursor-pointer flex items-center gap-3 font-semibold text-blue-300 hover:scale-110 transition hover:underline" onClick={()=>{
                    router.push(`/stuff/${item._id}`);
-                }}>{item.name}</td>
+                }}>{item.name}
+                 <FaHandPointRight size={20}/>
+                </td>
                 <td className="px-6 py-4">{item.gender}</td>
                   <td className="px-6 py-4">{item.designation}</td>
                 <td className="px-6 py-4">{item.phone}</td>

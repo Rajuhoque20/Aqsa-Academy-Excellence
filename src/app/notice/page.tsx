@@ -1,9 +1,10 @@
 'use client'
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { SearchInput } from 'src/components/SearchInput'
 import { AddButton, DeleteButton, EditButton } from 'src/components/Button'
 import axios from 'axios'
 import Loader from 'src/components/Loader/Loader'
+import { useDebounce } from 'src/components/customHooks/useDeboune'
 const AddNoticeModal = React.lazy(()=>import('./addNotice'));
 const DeleteNotice = React.lazy(()=>import('./deleteNotice'));
 
@@ -27,13 +28,16 @@ export default function Notice() {
     name: '',
     id: '',
   })
+  const [searchData, setSearchData]=useState<NoticeItem[]>([]);
   const [loading, setLoading]=useState(true);
+  const {debounceFetch}=useDebounce(noticeData, setSearchData,'title');
 
   // ✅ Fetch notices
   const getNotice = useCallback(async () => {
     try {
       const res = await axios.get('/api/notice')
       setNoticeData(res.data || []);
+      setSearchData(res?.data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching notices:', error);
@@ -46,12 +50,12 @@ export default function Notice() {
   }, [getNotice])
 
   // ✅ Filtered data
-  const searchData = useMemo(() => {
-    if (!searchKey) return noticeData
-    return noticeData.filter((item) =>
-      item.title?.toLowerCase().includes(searchKey.trim().toLowerCase())
-    )
-  }, [searchKey, noticeData])
+  // const searchData = useMemo(() => {
+  //   if (!searchKey) return noticeData
+  //   return noticeData.filter((item) =>
+  //     item.title?.toLowerCase().includes(searchKey.trim().toLowerCase())
+  //   )
+  // }, [searchKey, noticeData])
 
   // ✅ Handlers
   const handleEdit = (item: NoticeItem) => {
@@ -64,13 +68,18 @@ export default function Notice() {
     setModal((m) => ({ ...m, delete: true }))
   }
 
+  const handleChange=(value:string)=>{
+        setSearchKey(value);
+        debounceFetch(value);
+    };
+
   return (
     <div className="w-full flex text-black flex-col gap-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">Notice</h1>
         <div className="flex items-center gap-5">
-          <SearchInput onChange={setSearchKey} value={searchKey} />
+          <SearchInput onChange={handleChange} value={searchKey} />
           <AddButton
             onClick={() => setModal((m) => ({ ...m, add: true }))}
             title="Add Notice"

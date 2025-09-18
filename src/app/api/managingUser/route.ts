@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import ManagingUser from "../../../../models/managingUser";
+ import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +19,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Email already exists!" }, { status: 409 });
     }
 
-    await ManagingUser.create(formData);
+    const password=formData.name?.split(' ')[0]+'123@';
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const data={...formData, username:formData.email, password:hashedPassword}
+
+    await ManagingUser.create(data);
 
     return NextResponse.json(
       {

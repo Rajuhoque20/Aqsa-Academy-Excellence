@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "../../../../../lib/mongoose";
-import Users from "../../../../../models/users";
-// import bcrypt from "bcryptjs"; // if using password hashing
+import ManagingUser from "../../../../../models/managingUser";
+import bcrypt from "bcryptjs"; // if using password hashing
 
 export const authOptions = {
   providers: [
@@ -17,18 +17,18 @@ export const authOptions = {
 
         try {
           await connectToDatabase();
-          const user = await Users.findOne({ username: credentials.username });
+          const user = await ManagingUser.findOne({ username: credentials.username });
           if (!user) return null;
 
-          // Password check (if using bcrypt)
-          // const isValid = await bcrypt.compare(credentials.password, user.password);
-          // if (!isValid) return null;
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+          if (!isValid) return null;
 
           return {
             id: user._id.toString(),
             username: user.username,
             email: user.email,
-            name:user?.name
+            name:user?.name,
+            role:user?.role,
           };
         } catch (err) {
           console.error("Authorize error:", err);

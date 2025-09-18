@@ -31,7 +31,7 @@ type DeleteDTO={
 }
 
 const columns=["Name","Gender", "Class", "Reg No","Roll No", "Monthly Fees", "Reg Fees", "Due Fees","Action",];
-
+const classOptions=["All","V","VI","VII", "VIII","IX", "X", "XI", "XII"];
 export default function Student() {
   const [open, setOpen]=useState<boolean>(false);
   const [studentsData, setStudentsData]=useState([]);
@@ -42,7 +42,9 @@ export default function Student() {
   const [searchKey, setSearchKey]=useState('');
   const [loading, setLoading]=useState(true);
   const [searchData, setSearchData]=useState([]);
+  const [selectClass, setSelectClass]=useState('All');
   const {debounceFetch}=useDebounce(studentsData, setSearchData,'name');
+
  
   const router=useRouter();
 
@@ -69,6 +71,7 @@ export default function Student() {
         setSearchKey(value);
         debounceFetch(value);
     };
+    const filteredData=selectClass==='All'? searchData:searchData?.filter((item:StudentDTO)=>item.current_class ===selectClass)
 
 
   return (
@@ -76,6 +79,20 @@ export default function Student() {
       <div className='flex items-center justify-between'>
          <h1 className='text-2xl font-semibold text-white'>Students</h1>
          <div className='flex items-center gap-5'>
+              <div className="flex items-center gap-3">
+                    <label className="text-gray-400 font-semibold" htmlFor="phone">Class:</label>
+                    <select required name="gender"
+                    defaultValue={'All'}
+                    onChange={(e)=>{
+                      const val=e.target.value;
+                      setSelectClass(val);
+                    }}
+                    className="text-gray-300 border-1 border-gray-300 px-5 py-2.5">
+                        {classOptions?.map(item=>(
+                            <option key={item}  className="text-black" value={item==='Select'?'':item}>{item}</option>
+                        ))}
+                    </select>
+              </div>
               <SearchInput onChange={handleChange} value={searchKey}/>
                <AddButton onClick={()=>setOpen(true)} title='Add Student'/>                     
          </div>
@@ -93,7 +110,7 @@ export default function Student() {
             <td colSpan={12}><Loader/></td>
           </tr>
           :
-          searchData?.length===0?
+          filteredData?.length===0?
            <tr>
             <td colSpan={12}>
               <div className="flex items-center justify-center w-full text-center h-[5rem]">
@@ -102,7 +119,7 @@ export default function Student() {
             </td>
           </tr> 
           :
-          searchData?.map((item:StudentDTO)=>{
+          filteredData?.map((item:StudentDTO)=>{
             return(
               <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                 <td className="px-6 py-4 cursor-pointer flex items-center gap-3 font-semibold text-blue-300 hover:scale-110 transition hover:underline" onClick={()=>{

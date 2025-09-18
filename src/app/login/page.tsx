@@ -36,7 +36,7 @@ export default function LoginPage() {
               });
               setLoading(false);
               if(res?.error){
-                Notification.error('Invalid crendetails!');
+                Notification.error('Invalid credentials!');
                 return;
               }
                router.push("/student");

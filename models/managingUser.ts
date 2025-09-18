@@ -24,6 +24,15 @@ const managingUserSchema=new mongoose.Schema({
         type:String,
         required:true,
     },
+    password:{
+        type:String,
+        required:true,
+    },
+    username:{
+        type:String,
+        required:true,
+        unique:true,
+    }
 });
 
 const ManagingUser=models.ManagingUser||model("ManagingUser",managingUserSchema);

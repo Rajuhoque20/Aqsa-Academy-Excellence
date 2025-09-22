@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation'
 import React, { ReactNode } from 'react'
 import { FaUserGraduate, FaUser, FaChalkboardTeacher,
      FaUserTie, FaUserCheck, FaExclamationCircle,
-     FaCalendarAlt, FaBuilding, FaBook
+     FaCalendarAlt, FaBook
       } from "react-icons/fa";
 
 interface NavLink{

@@ -6,13 +6,19 @@ import fs from "fs";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Event from "../../../../models/events";
 
-const requiredFields = [
+interface EventData {
+  title: string;
+  description: string;
+  date: string;
+}
+
+const requiredFields:(keyof EventData)[]  = [
       "title",
       "description",
       "date",
     ];
 
-const getFormData = async (request: NextRequest, formData:any) => {
+const getFormData = async (request: NextRequest, formData:FormData) => {
   return {
     title: formData.get("title")?.toString(),
     description: formData.get("description")?.toString(),
@@ -24,7 +30,7 @@ export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
     const formData = await request.formData();
-   const eventData:any=await getFormData(request, formData);
+   const eventData=await getFormData(request, formData);
     const missingFields = requiredFields.filter((field) => !eventData[field]);
     if (missingFields.length > 0) {
     return NextResponse.json(
@@ -109,7 +115,7 @@ export async function PATCH(request: NextRequest) {
     await connectToDatabase();
 
     const formData = await request.formData();
-    const eventData: any = await getFormData(request, formData);
+    const eventData = await getFormData(request, formData);
 
     const missingFields = requiredFields.filter(
       (field) => !eventData[field]
@@ -131,6 +137,7 @@ export async function PATCH(request: NextRequest) {
 
     const file = formData.get("image") as File | null;
 
+    let fileName;
     if (file && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -150,15 +157,16 @@ export async function PATCH(request: NextRequest) {
       }
 
       // Save new file
-      const fileName = `${Date.now()}_${file.name}`;
+       fileName = `${Date.now()}_${file.name}`;
       const filePath = path.join(uploadDir, fileName);
       fs.writeFileSync(filePath, buffer);
 
       // Store relative path in DB
-      eventData.image = `/uploads/${fileName}`;
+      // eventData['image'] = `/uploads/${fileName}`;
     }
 
-    await Event.findByIdAndUpdate(id, { ...eventData });
+    const updatedData=fileName?{...eventData}:{...eventData, file:`/uploads/${fileName}`}
+    await Event.findByIdAndUpdate(id, updatedData);
 
     return NextResponse.json(
       { message: "Event Details have been updated!" },

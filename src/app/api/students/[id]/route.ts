@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "../../../../../lib/mongoose";
 import Students from "../../../../../models/students";
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req:NextRequest, context:unknown) {
   try {
     await connectToDatabase();
-    const student = await Students.findById(params.id);
+      const { id } = await (context as { params: { id: string } }).params;
+    if (!id) {
+      return NextResponse.json({ message: "Missing student ID" }, { status: 400 });
+    }
+    const student = await Students.findById(id);
 
     if (!student) {
       return NextResponse.json({ message: "Student not found" }, { status: 404 });

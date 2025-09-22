@@ -36,7 +36,7 @@ const tabs=[
     },
      {
         title:"Why Aqsa",
-        id:'about',
+        id:'why_aqsa',
         bg:'bg-gray-800',
         icon:<FaStar size={40}/>
     },
@@ -65,9 +65,9 @@ export const BannerHome=()=>{
                             <div className='w-14 h-14 relative rounded-full border-dashed border-white border-1'  >
                                     <Image src={'/aqsa_logo.jpg'} alt="aqsa_logo"  fill  className='rounded-full'/>
                             </div>
-                            <div className='flex flex-col'>
-                                <span className='text-3xl'>AQSA ACADEMY OF EXCELLENCE</span>
-                                <span className='text-sm'> An Institute of Eminence ( for Girls Students )</span>
+                            <div className='flex flex-col gap-2'>
+                                <h1 className='text-3xl font-semibold'>AQSA ACADEMY OF EXCELLENCE</h1>
+                                <small className='text-sm'> An Institute of Eminence ( for Girls Students )</small>
                             </div>
 
                             <div className="flex flex-col self-end ml-auto gap-2">

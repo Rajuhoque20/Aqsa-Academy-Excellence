@@ -6,7 +6,19 @@ import { connectToDatabase } from "../../../../lib/mongoose";
 import Students from "../../../../models/students";
 import StudentPayment from "../../../../models/studentPayment";
 
-const requiredFields = [
+type StudentDTO={
+      "name":string,
+      "email":string,
+      "current_class":string,
+      "address":string,
+      "father_name":string,
+      "mother_name":string,
+      "gender":string,
+      "phone":string,
+      "monthly_fees":string,
+      "registration_fees":string,
+}
+const requiredFields:(keyof StudentDTO)[] = [
       "name",
       "email",
       "current_class",
@@ -19,7 +31,7 @@ const requiredFields = [
       "registration_fees",
     ];
 
-const getFormData = async (request: NextRequest, formData:any) => {
+const getFormData = async (request: NextRequest, formData:FormData) => {
   return {
     name: formData.get("name")?.toString(),
     email: formData.get("email")?.toString(),
@@ -38,7 +50,7 @@ export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
     const formData = await request.formData();
-   const studentData:any=await getFormData(request, formData);
+   const studentData=await getFormData(request, formData);
     const missingFields = requiredFields.filter((field) => !studentData[field]);
     console.log("studentData", studentData,missingFields)
     if (missingFields.length > 0) {
@@ -151,7 +163,7 @@ export async function PATCH(request:NextRequest){
     try{
             await connectToDatabase();
              const formData = await request.formData();
-            const studentData: any = await getFormData(request, formData);
+            const studentData = await getFormData(request, formData);
                 const missingFields = requiredFields.filter((field) => !studentData[field]);
                 if (missingFields.length > 0) {
                 return NextResponse.json(

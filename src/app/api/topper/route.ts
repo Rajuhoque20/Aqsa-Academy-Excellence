@@ -6,14 +6,20 @@ import fs from "fs";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Topper from "../../../../models/topper";
 
-const requiredFields = [
+type TopperDTO={
+    "name":string,
+    "description":string,
+    "marks":string,
+    "class":string,
+}
+const requiredFields:(keyof TopperDTO)[] = [
       "name",
       "description",
       "marks",
       "class",
     ];
 
-const getFormData = async (request: NextRequest, formData:any) => {
+const getFormData = async (request: NextRequest, formData:FormData) => {
   return {
     name: formData.get("name")?.toString(),
     description: formData.get("description")?.toString(),
@@ -26,7 +32,7 @@ export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
     const formData = await request.formData();
-   const topperData:any=await getFormData(request, formData);
+   const topperData=await getFormData(request, formData);
     const missingFields = requiredFields.filter((field) => !topperData[field]);
     if (missingFields.length > 0) {
     return NextResponse.json(
@@ -111,7 +117,7 @@ export async function PATCH(request: NextRequest) {
     await connectToDatabase();
 
     const formData = await request.formData();
-    const topperData: any = await getFormData(request, formData);
+    const topperData = await getFormData(request, formData);
 
     const missingFields = requiredFields.filter(
       (field) => !topperData[field]
@@ -132,7 +138,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const file = formData.get("image") as File | null;
-
+    let fileName;
     if (file && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -152,15 +158,15 @@ export async function PATCH(request: NextRequest) {
       }
 
       // Save new file
-      const fileName = `${Date.now()}_${file.name}`;
+       fileName = `${Date.now()}_${file.name}`;
       const filePath = path.join(uploadDir, fileName);
       fs.writeFileSync(filePath, buffer);
 
       // Store relative path in DB
-      topperData.image = `/uploads/${fileName}`;
+      // topperData.image = `/uploads/${fileName}`;
     }
-
-    await Topper.findByIdAndUpdate(id, { ...topperData });
+     const updatedData=fileName?{...topperData}:{...topperData, file:`/uploads/${fileName}`}
+    await Topper.findByIdAndUpdate(id,updatedData);
 
     return NextResponse.json(
       { message: "Topper Details have been updated!" },

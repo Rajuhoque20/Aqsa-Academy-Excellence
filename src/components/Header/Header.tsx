@@ -45,6 +45,7 @@ export default function Header() {
         inline:"start",
       })
     }
+
   return (
     <>
     <div className='h-[8vh] flex flex-col w-full items-center bg-gray-900 justify-center px-5'>
@@ -94,7 +95,7 @@ export default function Header() {
               <FaEnvelope size={20}/>
             <h3>raju.hoque97@gmail.com</h3> 
             </div>        
-            <Button type='primary' onClick={()=>setOpen(true)} title='Apply to Register'/>
+            <Button type='primary'  onClick={()=>setOpen(true)} title={<strong>ONLINE ADMISSION</strong>}/>
         </div>
        
         }

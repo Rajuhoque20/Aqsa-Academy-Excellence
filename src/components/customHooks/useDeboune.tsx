@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { debounce } from "src/utility/debounce";
 
 export const useDebounce = <
@@ -9,8 +9,9 @@ export const useDebounce = <
   setSearchData: React.Dispatch<React.SetStateAction<T[]>>,
   key: K
 ) => {
-  const debounceFetch = useCallback(
-    debounce((value: string) => {
+  // Wrap the search logic with useCallback
+  const searchFn = useCallback(
+    (value: string) => {
       if (!value.trim()) {
         setSearchData(toppersData);
         return;
@@ -25,9 +26,12 @@ export const useDebounce = <
       });
 
       setSearchData(filtered);
-    }, 500),
-    [toppersData, setSearchData, key]
+    },
+    [toppersData, setSearchData, key] // correct deps
   );
+
+  // Memoize the debounced version
+  const debounceFetch = useMemo(() => debounce(searchFn, 500), [searchFn]);
 
   return { debounceFetch };
 };

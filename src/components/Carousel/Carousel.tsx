@@ -1,12 +1,12 @@
 "use client";
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 const Carousel = ({RenderedItem, dataLength}:{RenderedItem:ReactNode, dataLength:number}) => {
     const [carouIndex, setCarouIndex]=useState(0);
     const listRef=useRef<HTMLDivElement>(null);
     const containerRef=useRef<HTMLDivElement>(null);
     const [inView, setInView]=useState(false);
-    const handleIncrement=()=>{
+    const handleIncrement=useCallback(()=>{
           if(dataLength>carouIndex+1){
         setCarouIndex(prev=>{
             scrolltoView(prev+1);
@@ -16,7 +16,7 @@ const Carousel = ({RenderedItem, dataLength}:{RenderedItem:ReactNode, dataLength
         setCarouIndex(0);
         scrolltoView(0);
     }
-}
+},[dataLength,carouIndex])
 const handleDecrement=()=>{
     if(carouIndex>0){
         setCarouIndex(prev=>{
@@ -47,13 +47,13 @@ useEffect(()=>{
     },{
         threshold:0.8
     })
-
-    if(containerRef.current){
-        observer.observe(containerRef.current)
+     const element = containerRef.current;
+    if(element){
+        observer.observe(element)
     }
     return ()=>{
-        if(containerRef.current){
-        observer.unobserve(containerRef.current)
+        if(element){
+        observer.unobserve(element)
     }
     }
 },[])
@@ -69,7 +69,7 @@ useEffect(()=>{
     return()=>{
         clearInterval(interval);
     }
-},[carouIndex, inView])
+},[carouIndex, inView, handleIncrement])
 
   return (
     <div className='relative h-full flex w-full'  ref={containerRef}>

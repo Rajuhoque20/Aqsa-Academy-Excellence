@@ -1,6 +1,7 @@
 'use client'
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Title } from "../Title";
 
 type MonthNumber =
   '01' | '02' | '03' | '04' | '05' | '06' |
@@ -44,10 +45,8 @@ export const NewsFeed=()=>{
    getNotice();
   },[]);
     return(
-        <div className="text-gray-500 mt-50 px-30 gap-10 flex flex-col" id="news">
-            <h1 className="text-black text-5xl">
-                Notice & Important Links
-            </h1>
+        <div className="text-gray-500 mt-30 px-30 gap-10 flex flex-col" id="news">
+            <Title>NOTICE & IMPORTANT LINKS</Title>
             <div className="grid grid-cols-2 flex-col gap-5">
                 {newsFeed?.map((item:NewsDTO,index)=>{
                     const format=item?.date?.split('-');
@@ -55,7 +54,7 @@ export const NewsFeed=()=>{
                    const month = monthsMap[format?.[1] as MonthNumber];
                      const year=format?.[0];
                     return(
-                        <div key={index} className="bg-white p-5 rounded-md shadow-md flex gap-2 items-center transition hover:scale-105">
+                        <div key={index} style={{boxShadow:'0px 0px 15px rgba(0,0,0,0.2)'}} className="bg-white p-5 rounded-md flex gap-2 items-center transition hover:scale-105">
                             <div className="p-5 flex flex-col items-center bg-gray-800 text-white w-1/4 justify-center"  style={{clipPath: 'circle(55%)'}}>
                                 <h3>{day}</h3>
                                 <span>{month+", "+year}</span>

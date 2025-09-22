@@ -6,12 +6,17 @@ import fs from "fs";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Notice from "../../../../models/notice";
 
-const requiredFields = [
+const requiredFields:(keyof NoticeDTO)[] = [
       "title",
       "date",
     ];
 
-const getFormData = async (request: NextRequest, formData:any) => {
+ type NoticeDTO= {
+  title:string,
+  date:string,
+ }  
+
+const getFormData = async (request: NextRequest, formData:FormData) => {
   return {
     title: formData.get("title")?.toString(),
     date: formData.get("date")?.toString(),
@@ -22,7 +27,7 @@ export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
     const formData = await request.formData();
-   const NoticeData:any=await getFormData(request, formData);
+   const NoticeData=await getFormData(request, formData);
     const missingFields = requiredFields.filter((field) => !NoticeData[field]);
     if (missingFields.length > 0) {
     return NextResponse.json(
@@ -112,7 +117,7 @@ export async function PATCH(request: NextRequest) {
     await connectToDatabase();
 
     const formData = await request.formData();
-    const NoticeData: any = await getFormData(request, formData);
+    const NoticeData = await getFormData(request, formData);
 
     const missingFields = requiredFields.filter(
       (field) => !NoticeData[field]
@@ -133,7 +138,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const file = formData.get("file") as File | null;
-
+    let fileName;
     if (file && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -153,15 +158,15 @@ export async function PATCH(request: NextRequest) {
       }
 
       // Save new file
-      const fileName = `${Date.now()}_${file.name}`;
+       fileName = `${Date.now()}_${file.name}`;
       const filePath = path.join(uploadDir, fileName);
       fs.writeFileSync(filePath, buffer);
 
       // Store relative path in DB
-      NoticeData.file = `/uploads/${fileName}`;
     }
 
-    await Notice.findByIdAndUpdate(id, { ...NoticeData });
+    const updatedData=fileName?{...NoticeData}:{...NoticeData, file:`/uploads/${fileName}`}
+    await Notice.findByIdAndUpdate(id, updatedData);
 
     return NextResponse.json(
       { message: "Notice Details have been updated!" },

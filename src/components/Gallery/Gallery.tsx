@@ -3,7 +3,14 @@ import Image from "next/image";
 import Carousel from "../Carousel/Carousel"
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { Title } from "../Title";
+type EventDTO={
+  title:string,
+  id:string,
+  image:string,
+  alt:string,
+  description:string,
+}
 export const Gallery=()=>{
     const [events, setEventsData]=useState([]);
       const getEvents=()=>{
@@ -27,7 +34,7 @@ export const Gallery=()=>{
     const chunk = events.slice(i, i + 3);
     gallery.push({
       id: gallery.length + 1,
-      data: chunk.map((event:any, idx) => ({
+      data: chunk.map((event:EventDTO, idx) => ({
         id: idx + 1, // local id inside the chunk
         img: event.image,
         alt: event.title || "event image",
@@ -40,8 +47,8 @@ export const Gallery=()=>{
   console.log(gallery);
 
     return(
-        <div className="h-[60vh] w-full px-30 mb-30 gap-10 flex flex-col">
-            <h1 className="text-5xl text-black">Events</h1>
+        <div className=" w-full px-30 gap-10 flex flex-col">
+           <Title>EVENTS</Title>
              <Carousel
                dataLength={gallery?.length}
                RenderedItem={gallery?.map((item)=>{
@@ -50,9 +57,9 @@ export const Gallery=()=>{
                         {
                             item?.data?.map(img=>{
                                 return(
-                                    <div key={img.id} className="shadow-md p-5 flex flex-col gap-3 bg-gray-200 rounded-md">
+                                    <div key={img.id} className=" p-5 flex flex-col gap-3 rounded-md" style={{border:"1px solid rgba(0,0,0,0.2)"}}>
                                         <div className="relative h-[300px]">
-                                            <Image src={img.img} fill alt={img.alt} />
+                                            <Image src={img.img} fill alt={img.alt} className="rounded-md" style={{boxShadow:'0px 0px 15px rgba(0,0,0,0.5)'}}/>
 
                                         </div>
                                         <h2 className="text-gray-700 font-semibold">{img.title}</h2>

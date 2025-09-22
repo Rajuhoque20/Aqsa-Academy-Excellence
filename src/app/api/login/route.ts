@@ -10,7 +10,7 @@ export async function POST(request:NextRequest){
     }
     try{
          await connectToDatabase();
-        const user:any= await Users.findOne({username});
+        const user= await Users.findOne({username});
     if(!user){
         return NextResponse.json({message:"User not found!", type:"error",},{status:404})
     }
@@ -27,7 +27,7 @@ export async function POST(request:NextRequest){
     }
     catch(err){
         console.log(err);
-        return null;
+      
     }
     
 }

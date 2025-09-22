@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import TeacherPayment from "../../../../../models/teacherPayment";
 import { connectToDatabase } from "../../../../../lib/mongoose";
 
-export async function GET(req:NextRequest, {params}:{params:{id:string}}) {
+export async function GET(req:NextRequest, context:unknown) {
   try {
     await connectToDatabase();
-    const teacherpayments = await TeacherPayment.find({teacherId:params.id});
+      const { id } = await (context as { params: { id: string } }).params;
+    const teacherpayments = await TeacherPayment.find({teacherId:id});
     return NextResponse.json(teacherpayments, { status: 200 });
   } catch (err) {
     console.error(err);

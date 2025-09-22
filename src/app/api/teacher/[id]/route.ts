@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "../../../../../lib/mongoose";
 import Teacher from "../../../../../models/teacher";
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context:unknown) {
   try {
     await connectToDatabase();
-    const teacher = await Teacher.findById(params.id);
+     const { id } = await (context as { params: { id: string } }).params;
+    const teacher = await Teacher.findById(id);
 
     if (!teacher) {
       return NextResponse.json({ message: "Teacher not found" }, { status: 404 });

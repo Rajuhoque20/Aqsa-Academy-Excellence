@@ -1,6 +1,5 @@
 
 'use client'
-import axios from 'axios';
 import Link from 'next/link'
 import { usePathname } from 'next/navigation';
 import React from 'react'
@@ -85,9 +84,8 @@ const footerData=[
 
 export default function Footer() {
     const pathname = usePathname();
-    console.log("pathname",pathname)
   return (
-    <div className='h-max blue-bg flex items-center justify-between  p-20'>
+    <div className='h-max flex items-center justify-between bg-gray-800  p-20'>
       <div className='flex justify-between w-4/5'>
         {footerData?.map((item,index)=>{
           return(

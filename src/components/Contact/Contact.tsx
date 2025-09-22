@@ -1,12 +1,14 @@
 import Image from "next/image"
+import { Title } from "../Title"
 
 export const Contact=()=>{
     return(
-        <div className="flex flex-col gap-10 px-30 pb-30 h-max" id="contact">
-            <h1 className="text-5xl text-black">Contact</h1>
+        <div className="flex flex-col gap-10 px-30 mb-30 mt-5 h-max" id="contact">
+            <Title>CONTACT</Title>
             <div className="flex gap-20">
-                <div className="relative w-3/5 shadow-md transition hover:scale-105">
+                <div className="relative w-3/5 transition hover:scale-105">
                     <Image
+                    style={{boxShadow:'0px 0px 15px rgba(0,0,0,0.4'}}
                     className="rounded-md"
                     src={'/contact.jpg'} 
                     alt="contact"

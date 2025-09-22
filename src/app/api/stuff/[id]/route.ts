@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "../../../../../lib/mongoose";
 import Stuff from "../../../../../models/stuff";
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context:unknown) {
   try {
     await connectToDatabase();
-    const stuff = await Stuff.findById(params?.id);
+     const { id } = await (context as { params: { id: string } }).params;
+    const stuff = await Stuff.findById(id);
 
     if (!stuff) {
       return NextResponse.json({ message: "stuff not found" }, { status: 404 });

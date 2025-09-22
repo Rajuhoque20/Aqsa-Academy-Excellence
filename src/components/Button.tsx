@@ -1,3 +1,4 @@
+import { ReactNode } from "react"
 
 export const EditButton=({
   onClick,
@@ -21,7 +22,7 @@ export const AddButton=({onClick, title}:{onClick:()=>void, title:string})=>{
     <button onClick={onClick} className='px-5 py-2 bg-blue-600 rounded-md text-white cursor-pointer'>{title?title:'Add Student'}</button>
   )
 }
-export const Button=({onClick, title, type="primary", disabled}:{onClick:()=>void, title:string, type?:string, disabled?:boolean})=>{
+export const Button=({onClick, title, type="primary", disabled}:{onClick:()=>void, title:string|ReactNode, type?:string, disabled?:boolean})=>{
     return(<button
     onClick={onClick}
     disabled={disabled}

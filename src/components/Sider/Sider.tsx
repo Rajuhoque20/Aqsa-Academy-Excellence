@@ -46,10 +46,6 @@ const navLinks:NavLink[]=[
         id:8, title:"Toppers",url:"/toppers",
          icon:<FaUserGraduate size={20}/>
     },
-    {
-        id:9, title:"Job Vacancy",url:"/jobVacancy",
-         icon:<FaBuilding  size={20}/>
-    }
 ];
 
 export const Sider = () => {

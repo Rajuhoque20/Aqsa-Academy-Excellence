@@ -63,6 +63,7 @@ export const Sider = () => {
   )
 }
 
+
 const NavItem=({data}:{data:NavLink})=>{
     const pathName=usePathname();
     const isActive=pathName.includes(data.url);

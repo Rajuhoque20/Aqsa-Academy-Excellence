@@ -8,7 +8,7 @@ export async function connectToDatabase() {
   }
 
   try {
-    const mongoUrl = process.env.MONGO_URL || process.env.mongoUrl;
+    const mongoUrl = process.env.MONGO_URL;
     if (!mongoUrl) {
       throw new Error("MONGO_URL is not defined in environment variables.");
     }

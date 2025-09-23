@@ -1,26 +1,32 @@
+// lib/mongodb.ts
 import mongoose from "mongoose";
 
-let isConnected = false; // Track connection state
+type MongooseCache = {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+};
+
+// Tell TypeScript that globalThis may have _mongoose
+const globalWithCache = globalThis as typeof globalThis & { _mongoose?: MongooseCache };
+
+// Initialize cache if it doesn't exist
+if (!globalWithCache._mongoose) {
+  globalWithCache._mongoose = { conn: null, promise: null };
+}
+
+// At this point _mongoose is definitely defined
+const cached: MongooseCache = globalWithCache._mongoose;
 
 export async function connectToDatabase() {
-  if (isConnected) {
-    return; // If already connected, just return
-  }
+  if (cached.conn) return cached.conn;
 
-  try {
+  if (!cached.promise) {
     const mongoUrl = process.env.MONGO_URL;
-    if (!mongoUrl) {
-      throw new Error("MONGO_URL is not defined in environment variables.");
-    }
+    if (!mongoUrl) throw new Error("MONGO_URL not defined");
 
-    const db = await mongoose.connect(mongoUrl, {
-      bufferCommands: false, // Disable Mongoose buffering
-    });
-
-    isConnected = !!db.connections[0].readyState;
-    console.log("✅ MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    throw err;
+    cached.promise = mongoose.connect(mongoUrl).then((mongoose) => mongoose);
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 }

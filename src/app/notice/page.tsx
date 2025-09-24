@@ -104,7 +104,7 @@ export default function Notice() {
                 <p className="text-white">{item.title}</p>
                 {item.file && (
                   <a
-                    href={`http://localhost:3000/${item.file}`}
+                    href={item.file}
                     className="text-sm ml-3 font-normal text-blue-400 underline"
                     target="_blank"
                     rel="noopener noreferrer"

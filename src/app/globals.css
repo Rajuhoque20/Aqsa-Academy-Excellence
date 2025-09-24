@@ -26,4 +26,7 @@ body {
 *{
   box-sizing: border-box;
 }
+.overview-bg{
+ background-image: linear-gradient(rgb(192, 11, 216) 0, rgb(149, 152, 250) 100%);
+}
 

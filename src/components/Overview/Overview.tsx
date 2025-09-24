@@ -47,7 +47,7 @@ export const Overview = () => {
   ];
 
   return (
-    <div id="why_aqsa" className="p mb-20 flex flex-col justify-between border-1 bg-red-400 p-30">
+    <div id="why_aqsa" className="p mb-20 flex flex-col justify-between border-1 overview-bg p-30">
      <Title>WHY CHOOSE AQSA?</Title>
             <ul className="text-gray-800 list-disc pl-5 gap-2 mt-10 flex flex-col">
                 <li> Top-rated Mission in Cooch Behar, known for academic excellence.</li>

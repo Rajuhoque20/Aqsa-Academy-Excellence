@@ -1,10 +1,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import fs from "fs";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Event from "../../../../models/events";
+import { supabase } from "../../../../lib/superbase";
 
 interface EventData {
   title: string;
@@ -44,16 +44,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Title already exists!" }, { status: 409 });
     }
 
-    // Save file to /public/uploads
-      const file = formData.get("image") as File;
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true }); // ensure uploads folder exists
-
-    const fileName = `${Date.now()}_${file.name}`;
-    const filePath = path.join(uploadsDir, fileName);
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
-    const fileUrl = `/uploads/${fileName}`; // This is what you'll save in DB
+    let fileUrl='';
+         const file = formData.get("image") as File;
+           if(formData.get("image")){
+             const fileName = `${Date.now()}_${file.name}`;
+            const { error } = await supabase.storage
+             .from("aqsa_upload") // bucket name
+             .upload(fileName, file, {
+               cacheControl: "3600",
+               upsert: false,
+             });
+       
+             const { data: signed } = await supabase.storage
+             .from("aqsa_upload")
+             .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year
+            fileUrl = signed?.signedUrl||'';
+           if (error) throw error;
+           }
     await Event.create({
       ...eventData,
       image: fileUrl, // Store relative path

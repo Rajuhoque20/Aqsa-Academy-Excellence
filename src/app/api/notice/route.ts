@@ -50,11 +50,6 @@ export async function POST(request: NextRequest) {
     let fileUrl='';
     if(file?.name){
       const fileName = `${Date.now()}_${file.name}`;
-    // const filePath = path.join(uploadsDir, fileName);
-    // const buffer = Buffer.from(await file.arrayBuffer());
-    // await writeFile(filePath, buffer);
-    //  fileUrl = `/uploads/${fileName}`;
-
      const { error } = await supabase.storage
       .from("aqsa_upload") // bucket name
       .upload(fileName, file, {
@@ -65,11 +60,8 @@ export async function POST(request: NextRequest) {
       const { data: signed } = await supabase.storage
       .from("aqsa_upload")
       .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year
-
      fileUrl = signed?.signedUrl||'';
-
     if (error) throw error;
-
     }
     
     await Notice.create({

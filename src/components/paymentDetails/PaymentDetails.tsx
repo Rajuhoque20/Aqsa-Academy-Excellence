@@ -3,6 +3,10 @@ import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { Button, DeleteButton, EditButton } from "src/components/Button";
 import Notification from "../Notification/Notifcation";
 import Loader from "../Loader/Loader";
+import { usePDF } from "react-to-pdf";
+import { HiddenInvoice } from "./downloadTemplate";
+import CheckBox from "../Checkbox/Checkbox";
+import { dateMonthString } from "src/utility/dateToMonth";
 const AddPayment =React.lazy(()=>import("src/components/AddPayment/addPayment")); 
 const DeletePayment =React.lazy(()=>import("src/components/DeletePayment/deletePayment"));
 const columns=["Payment for","Monthly Fees",'Pay Date', "Paid Amount", "Due", "Action",];
@@ -19,12 +23,7 @@ type DeleteDTO={
         id:string|undefined,
     }
 
-const dateMonthString=(input:string)=>{
-const [year, month] = input.split("-");
-const date = new Date(`${year}-${month}-01`);
-const result = `${year}/${date.toLocaleString("en-US", { month: "long" })}`;
-return result;
-}
+
 export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:string]:string}, endPoint:string}){
   const [isEdit, setIsEdit]=useState(false);
     const [isDelete, setIsDelete]=useState(false);
@@ -33,6 +32,9 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
     const [open, setOpen]=useState<boolean>(false);
     const [paymentDatails, setPaymentDetails]=useState([]);
     const [loading, setLoading]=useState(true);
+    const [downloadData,setDownloadData]=useState<PaymentDTO[]>([]);
+   const { toPDF, targetRef } = usePDF({ filename: "payment.pdf" });
+
     
     let id='';
     if(idParam){
@@ -93,16 +95,59 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
             }       
         }
 
+  const handleCheckedCandidates=(item:PaymentDTO, type:string)=>{
+  if(type==='add'){
+    setDownloadData(prev=>prev.includes(item)?prev:[...prev,item]);
+  }
+  else{
+    setDownloadData(prev=>prev.filter(el=>el._id!==item._id));
+  }
+}
+
   return(
     <>
      <div className="flex items-center justify-between">
              <h2 className="text-xl mt-7 mb-3">Payment Details</h2>
-             <Button title="Add Payment" type="primary" onClick={()=>{setOpen(true)}}/>
+              
+              <div className="gap-5 items-center flex">
+                {downloadData?.length>0&&<Button title="Download" type="secondary"  onClick={() =>{
+                setTimeout(() => {
+                toPDF();
+              }, 100);}}/>}
+              <Button title="Add Payment" type="primary" onClick={()=>{setOpen(true)}}/>
+
+              </div>
+             
       </div>
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                  {columns?.map(item=><th key={item} scope="col" className="px-6 py-3">{item}</th >)}
+                  {columns?.map((item,index)=>{
+                    return(
+                       <th key={item}  scope="col" className={`px-6 py-3`}>
+                      {index===0?
+                        
+                          <div className='flex item-center gap-5'>
+                            <CheckBox checked={downloadData.length===paymentDatails.length} onChange={(e)=>{
+                              
+                              if(e.target.checked){
+                                setDownloadData(paymentDatails);
+                              }
+                              else{
+                                setDownloadData([])
+                              }
+                              
+                            }}/>
+                            <p> {item}</p>
+                          </div>
+                          :
+                      <p>{item}</p>
+                          }
+                   </th >)
+                  }
+                  )
+                }
+                    
               </tr>
             </thead>
             <tbody>
@@ -124,7 +169,22 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
               paymentDatails?.map((item:PaymentDTO)=>{
                 return(
                   <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                    <td className="px-6 py-4 cursor-pointer" >{dateMonthString(item.pay_month)}</td>
+
+                    <td className="px-6 py-4 cursor-pointer" >
+                      <div className='flex item-center gap-5'>
+                          <CheckBox checked={downloadData?.includes(item)} onChange={(e)=>{
+                            if(e.target.checked){
+                                handleCheckedCandidates(item,'add');
+                            }
+                            else
+                            {
+                                handleCheckedCandidates(item,'remove');
+                            }
+                            
+                          }}/>
+                          <p>  {dateMonthString(item.pay_month)}</p>
+                      </div>
+                     </td>
                     <td className="px-6 py-4">{item.monthly_fees}</td>
                     <td className="px-6 py-4">{item.pay_date}</td>
                       <td className="px-6 py-4">{item.paid_amount}</td>
@@ -139,6 +199,7 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
                         setDeleteParam({name:item?.pay_month, id:item?._id});
     
                       }}/>
+                     
                     </td>
                   </tr>
                 )
@@ -148,6 +209,7 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
           {open&&<AddPayment open={open} type={"add"}  setOpen={setOpen} handleSubmit={handleSubmit} editParam={null}/>}
           {isEdit&&<AddPayment open={isEdit} type='edit' setOpen={setIsEdit} handleSubmit={handleSubmit} editParam={editParam}/>}
           <DeletePayment open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} deleteHandler={deleteHandler}/>
+            <HiddenInvoice targetRef={targetRef} data={downloadData}/>
         </>
   )
 }

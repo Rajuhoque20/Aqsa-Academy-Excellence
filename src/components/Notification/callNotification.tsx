@@ -1,3 +1,5 @@
+
+'use client'
 import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { AiOutlineClose } from "react-icons/ai";

@@ -1,3 +1,5 @@
+
+'use client'
 import React, { FormEvent, useState } from 'react'
 const Modal=React.lazy(()=>import("src/components/modal/Modal"));
 import { Button } from '../Button';

@@ -1,8 +1,6 @@
 
-'use client'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation';
 import React from 'react'
+import LoginButton from './LoginButton';
 
 const footerData=[
   {
@@ -83,7 +81,7 @@ const footerData=[
 ];
 
 export default function Footer() {
-    const pathname = usePathname();
+    
   return (
     <div className='h-max flex items-center justify-between bg-gray-800  p-20'>
       <div className='flex justify-between w-4/5'>
@@ -100,9 +98,8 @@ export default function Footer() {
           )
         })}
       </div>
-      {pathname!=='/login'&&<Link href='/login'>
-      <button className='px-10 py-3 shadow-cyan-500/50 bg-cyan-500 shadow-lg cursor-pointer rounded-md transition hover:scale-105' >Login</button>
-      </Link>}
+      <LoginButton/>
+     
     </div>
   )
 }

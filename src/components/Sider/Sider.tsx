@@ -1,3 +1,5 @@
+
+'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { ReactNode } from 'react'
@@ -68,7 +70,7 @@ const NavItem=({data}:{data:NavLink})=>{
     const pathName=usePathname();
     const isActive=pathName.includes(data.url);
     return(
-        <Link href={data.url} className={` flex items-center gap-2 ${isActive?'bg-blue-800':'bg-gray-800'} px-5 py-3 rounded-md`}>
+        <Link href={data.url} prefetch className={` flex items-center gap-2 ${isActive?'bg-blue-800':'bg-gray-800'} px-5 py-3 rounded-md`}>
             {data.icon}
             {data.title}
             </Link>

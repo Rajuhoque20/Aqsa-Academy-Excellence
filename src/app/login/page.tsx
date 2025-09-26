@@ -39,8 +39,9 @@ export default function LoginPage() {
                 Notification.error('Invalid credentials!');
                 return;
               }
-               router.push("/student");
-
+              if(res)
+             
+               router.push("/student");            
             }
             catch(error){
               ErrorMessage(error);

@@ -1,6 +1,4 @@
-'use client'
-import axios from "axios";
-import { useEffect, useState } from "react";
+
 import { Title } from "../Title";
 
 type MonthNumber =
@@ -26,29 +24,14 @@ type NewsDTO={
   date:string,
   file:string,
 }
-export const NewsFeed=()=>{
-    const [newsFeed,setNewsFeed]=useState([]);
-
-    const getNotice=()=>{
-     axios.get('/api/notice')
-    .then(res=>{
-      if(res){
-        setNewsFeed(res?.data);
-      }
-    })
-    .catch(error=>{
-      console.log(error)
-    })
-  }
-
-  useEffect(()=>{
-   getNotice();
-  },[]);
+export const NewsFeed=async()=>{
+    const res=await fetch(`${process.env.NEXTAUTH_URL}/api/notice`);
+    const newsFeed=await res.json();
     return(
         <div className="text-gray-500 mt-30 px-30 gap-10 flex flex-col" id="news">
             <Title>NOTICE & IMPORTANT LINKS</Title>
             <div className="grid grid-cols-2 flex-col gap-5">
-                {newsFeed?.map((item:NewsDTO,index)=>{
+                {newsFeed?.map((item:NewsDTO,index:number)=>{
                     const format=item?.date?.split('-');
                     const day=format?.[2];
                    const month = monthsMap[format?.[1] as MonthNumber];

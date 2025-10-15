@@ -37,7 +37,7 @@ export default function HeaderClient({data}:{data:{name:string}}){
           </div>
         <span className='text-2xl'>Welcome to Aqsa Academy of Excelence!</span>
         </div>
-        :<div className='flex gap-8'>
+        :<div className='md:flex gap-8 hidden'>
           {links?.map(item=><NavButton
           key={item.id}
           data={item}
@@ -53,7 +53,8 @@ export default function HeaderClient({data}:{data:{name:string}}){
            <SignoutButton/>
         </div>
         :
-        <div className='ml-auto gap-5 flex items-center'> 
+        <>
+        <div className='ml-auto md:gap-5 gap-2 flex flex-col md:flex-row md:items-center mr-3'> 
             <div className='flex items-center gap-3 text-yellow-400'>
               <FaPhone size={20}/>
               <h3>+91 7047082113</h3>  
@@ -62,8 +63,14 @@ export default function HeaderClient({data}:{data:{name:string}}){
               <FaEnvelope size={20}/>
             <h3>raju.hoque97@gmail.com</h3> 
             </div>        
-           <AdmissionButtion/>
+            <div className='hidden md:block'>
+              <AdmissionButtion/>
+            </div>
         </div>
+         <div className='block md:hidden'>
+             <AdmissionButtion/>
+          </div>
+        </>
        
         }
       </div>

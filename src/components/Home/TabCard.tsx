@@ -11,8 +11,8 @@ const handleClick=(id:string)=>{
     }
 export const TabCard = ({item}:Props) => {
   return (
-     <div key={item.id} onClick={()=>handleClick(item.id)}  className={`${item.bg} shadow-sm  h-full flex w-[300px] items-center justify-center cursor-pointer hover:scale-103 transition rounded-md `} >
-      <div className='flex gap-3 items-center'>
+     <div key={item.id} onClick={()=>handleClick(item.id)}  className={`${item.bg} shadow-sm  md:h-full h-max flex  md:w-[300px] w-max items-center justify-center cursor-pointer hover:scale-103 transition rounded-md `} >
+      <div className='flex gap-3 items-center flex-col md:flex-row p-3'>
         {item?.icon}
         <span className='text-xl font-semibold'>{item.title}</span>
       </div>

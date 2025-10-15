@@ -2,7 +2,7 @@
 import { FaPhone, FaEnvelope, } from "react-icons/fa";
  export default function ContactMap(){
     return(
-         <div className="relative w-2/3 transition hover:scale-105 "> 
+         <div className="relative md:w-2/3 w-full transition hover:scale-105 "> 
                 <div className="absolute left-5 top-[15rem] bg-green-400 rounded-md p-5 flex flex-col gap-2 bg-radial-[at_50%_75%] from-sky-600 shadow via-blue-800 to-indigo-900 to-90%">
                     <h2 className="font-semibold">Contact:</h2>
                     <div className="flex items-center gap-3">

@@ -1,6 +1,7 @@
 
 import React from 'react'
 import LoginButton from './LoginButton';
+import { useAlarmStore } from 'src/store/alarmStore';
 
 const footerData=[
   {
@@ -81,10 +82,11 @@ const footerData=[
 ];
 
 export default function Footer() {
+  const {handleEnable}=useAlarmStore()
     
   return (
-    <div className='h-max flex items-center justify-between bg-gray-800  p-20'>
-      <div className='flex justify-between w-4/5'>
+    <div className='h-max flex flex-col md:flex-row items-center justify-between bg-gray-800 p-5 gap-5 md:p-20'>
+      <div className='flex justify-between md:w-4/5 w-full flex-wrap gap-5'>
         {footerData?.map((item,index)=>{
           return(
             <div key={index} className='flex flex-col gap-2'>
@@ -97,8 +99,15 @@ export default function Footer() {
             </div>
           )
         })}
+         <button
+            className="px-5 py-3 cursor-pointer h-max bg-blue-600 text-white rounded-lg self-center"
+            onClick={handleEnable}
+          >
+            🔔 Enable Bell Allarm
+          </button>
       </div>
       <LoginButton/>
+
      
     </div>
   )

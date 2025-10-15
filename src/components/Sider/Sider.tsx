@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import React, { ReactNode } from 'react'
 import { FaUserGraduate, FaUser, FaChalkboardTeacher,
      FaUserTie, FaUserCheck, FaExclamationCircle,
-     FaCalendarAlt, FaBook
+     FaCalendarAlt, FaBook, FaBell 
       } from "react-icons/fa";
 
 interface NavLink{
@@ -47,6 +47,10 @@ const navLinks:NavLink[]=[
     {
         id:8, title:"Toppers",url:"/toppers",
          icon:<FaUserGraduate size={20}/>
+    },
+    {
+        id:9, title:"Alarm Bell",url:"/alarm",
+         icon:<FaBell size={20}/>
     },
 ];
 

@@ -7,7 +7,7 @@ export default function AdmissionButtion(){
        const [open,setOpen]=useState(false);
     return(
         <>
-        <Button type='primary'  onClick={()=>setOpen(true)} title={<strong>ONLINE ADMISSION</strong>}/>
+        <Button type='primary'  onClick={()=>setOpen(true)} title={<strong className="text-sm">ONLINE ADMISSION</strong>}/>
         {open&&<NewStudentRegistration open={open} setOpen={setOpen}/>}
         </>    
     )

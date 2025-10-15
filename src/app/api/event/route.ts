@@ -66,6 +66,32 @@ export async function POST(request: NextRequest) {
       image: fileUrl, // Store relative path
     });
 
+    //  const file = formData.get("image") as File | null;
+        
+    //         let fileName;
+    //         if (file && file.size > 0) {
+    //           const bytes = await file.arrayBuffer();
+    //           const buffer = Buffer.from(bytes);
+        
+    //           // Upload dir
+    //           const uploadDir = path.join(process.cwd(), "public", "uploads");
+    //           if (!fs.existsSync(uploadDir)) {
+    //             fs.mkdirSync(uploadDir, { recursive: true });
+    //           }
+        
+        
+    //           // Save new file
+    //            fileName = `${Date.now()}_${file.name}`;
+    //           const filePath = path.join(uploadDir, fileName);
+    //           fs.writeFileSync(filePath, buffer);
+        
+    //         }
+        
+    //         const updatedData=fileName?{...eventData, image:`/uploads/${fileName}`,
+    //        }:eventData
+        
+    //     await Event.create(updatedData);
+
     return NextResponse.json(
       {
         message: "Event has been added",    
@@ -172,7 +198,7 @@ export async function PATCH(request: NextRequest) {
       // eventData['image'] = `/uploads/${fileName}`;
     }
 
-    const updatedData=fileName?{...eventData}:{...eventData, file:`/uploads/${fileName}`}
+    const updatedData=fileName?{...eventData, image:`/uploads/${fileName}`}:eventData;
     await Event.findByIdAndUpdate(id, updatedData);
 
     return NextResponse.json(

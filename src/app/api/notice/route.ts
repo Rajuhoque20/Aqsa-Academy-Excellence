@@ -6,6 +6,7 @@ import fs from "fs";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Notice from "../../../../models/notice";
 import { supabase } from "../../../../lib/superbase";
+// import { supabase } from "../../../../lib/superbase";
 
 const requiredFields:(keyof NoticeDTO)[] = [
       "title",
@@ -42,11 +43,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Title already exists!" }, { status: 409 });
     }
 
-    // Save file to /public/uploads
+  
+      //Super base
       const file = formData.get("file") as File;
-    // const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    // await mkdir(uploadsDir, { recursive: true }); // ensure uploads folder exists
-
     let fileUrl='';
     if(file?.name){
       const fileName = `${Date.now()}_${file.name}`;
@@ -63,11 +62,34 @@ export async function POST(request: NextRequest) {
      fileUrl = signed?.signedUrl||'';
     if (error) throw error;
     }
-    
+
     await Notice.create({
       ...NoticeData,
       file: fileUrl, // Store relative path
     });
+
+
+     //local upload
+    // const file = formData.get("image") as File | null;
+    //     let fileName;
+    //     if (file && file.size > 0) {
+    //       const bytes = await file.arrayBuffer();
+    //       const buffer = Buffer.from(bytes);
+    
+    //       // Upload dir
+    //       const uploadDir = path.join(process.cwd(), "public", "uploads");
+    //       if (!fs.existsSync(uploadDir)) {
+    //         fs.mkdirSync(uploadDir, { recursive: true });
+    //       }
+    //        fileName = `${Date.now()}_${file.name}`;
+    //       const filePath = path.join(uploadDir, fileName);
+    //       fs.writeFileSync(filePath, buffer);
+    //     }
+    
+    //     const updatedData=fileName?{...NoticeData,
+    //    }:{...NoticeData, file:`/uploads/${fileName}`}
+    
+    // await Notice.create(updatedData);
 
     return NextResponse.json(
       {
@@ -146,8 +168,9 @@ export async function PATCH(request: NextRequest) {
     }
 
     const file = formData.get("file") as File | null;
+    
     let fileName;
-    if (file && file.size > 0) {
+    if (file?.name && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
@@ -173,7 +196,7 @@ export async function PATCH(request: NextRequest) {
       // Store relative path in DB
     }
 
-    const updatedData=fileName?{...NoticeData}:{...NoticeData, file:`/uploads/${fileName}`}
+    const updatedData=fileName?{...NoticeData, file:`/uploads/${fileName}`}:NoticeData;
     await Notice.findByIdAndUpdate(id, updatedData);
 
     return NextResponse.json(

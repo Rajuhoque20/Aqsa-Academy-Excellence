@@ -9,11 +9,11 @@ type TopperDTO={
 }
 export default function ToppersContent({toppersData}:{toppersData:TopperDTO[]}){
     return(
-         <div className='h-max text-black p-30 gap-5 flex flex-col' id="toppers">
+         <div className='h-max text-black p-5 md:p-30 gap-5 flex flex-col mt-10 md:mt-0' id="toppers">
        <Title>OUR TOPPERS</Title>
-      <div className='grid gap-20 grid-cols-4 mt-8' style={{perspective: "1000px"}}>
+      <div className='grid md:gap-20 gap-8 grid-cols-1 md:grid-cols-4 mt-8'>
         {toppersData?.map((item:TopperDTO)=>(
-          <div className={`rounded-md flex flex-col gap-3 transform transition hover:scale-105 topper-card-in`} key={item._id} >
+          <div className={`rounded-md flex flex-col items-center gap-3 transform transition hover:scale-105 topper-card-in`} key={item._id} >
             <div className='relative h-[220px] w-[220PX] mx-10'>
             <Image
               style={{boxShadow:'0px 0px 30px skyblue'}}

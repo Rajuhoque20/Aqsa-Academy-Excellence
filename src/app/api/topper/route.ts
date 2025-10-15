@@ -5,6 +5,7 @@ import fs from "fs";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Topper from "../../../../models/topper";
 import { supabase } from "../../../../lib/superbase";
+// import { supabase } from "../../../../lib/superbase";
 
 type TopperDTO={
     "name":string,
@@ -40,6 +41,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
     );
     }
+
+
+    //superbase
    
      let fileUrl='';
       const file = formData.get("image") as File;
@@ -62,6 +66,34 @@ export async function POST(request: NextRequest) {
       ...topperData,
       image: fileUrl, // Store relative path
     });
+
+
+    //Local uploads
+
+    //  const file = formData.get("image") as File | null;
+    
+    //     let fileName;
+    //     if (file && file.size > 0) {
+    //       const bytes = await file.arrayBuffer();
+    //       const buffer = Buffer.from(bytes);
+    
+    //       // Upload dir
+    //       const uploadDir = path.join(process.cwd(), "public", "uploads");
+    //       if (!fs.existsSync(uploadDir)) {
+    //         fs.mkdirSync(uploadDir, { recursive: true });
+    //       }
+    
+    //        fileName = `${Date.now()}_${file.name}`;
+    //       const filePath = path.join(uploadDir, fileName);
+    //       fs.writeFileSync(filePath, buffer);
+    
+    //     }
+    
+    //     const updatedData=fileName?{...topperData, image:`/uploads/${fileName}`,
+    //    }:topperData
+    
+    // await Topper.create(updatedData);
+
 
     return NextResponse.json(
       {
@@ -167,7 +199,7 @@ export async function PATCH(request: NextRequest) {
       // Store relative path in DB
       // topperData.image = `/uploads/${fileName}`;
     }
-     const updatedData=fileName?{...topperData}:{...topperData, file:`/uploads/${fileName}`}
+     const updatedData=fileName?{...topperData, image:`/uploads/${fileName}`}:topperData;
     await Topper.findByIdAndUpdate(id,updatedData);
 
     return NextResponse.json(

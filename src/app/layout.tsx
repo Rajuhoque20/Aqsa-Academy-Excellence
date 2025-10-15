@@ -1,20 +1,29 @@
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LayoutContent } from "./layoutContent";
 import { AuthProvider } from "./Providers";
+import { Roboto_Condensed } from "next/font/google";
+import AlarmBell from "src/components/Alarm_Bell/Alarm_bell";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
+  weight: ["300", "400", "700"], // choose weights you need
+  style: ["normal", "italic"],  // optional
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Aqsa Academy",
@@ -30,8 +39,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+        className={`${robotoCondensed.className}`}
+      >  <AlarmBell/>
         <AuthProvider>
             <LayoutContent element={children}/>
        </AuthProvider>

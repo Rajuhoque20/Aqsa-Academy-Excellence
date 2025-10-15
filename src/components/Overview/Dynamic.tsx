@@ -75,7 +75,7 @@ export default function DynamicOverview() {
   ];
 
   return (
-    <div className="mt-10 px-20 flex justify-between items-center" ref={ref}>
+    <div className="mt-10 px-0  md:px-20 flex justify-between gap-3 items-center" ref={ref}>
       {overviewData.map((item) => (
         <OverviewCard key={item.id} id={item.id} title={item.title} count={item.count} cssClass={item.class}/>
       ))}

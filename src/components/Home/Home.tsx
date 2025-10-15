@@ -46,7 +46,7 @@ const tabs=[
 
 export const BannerHome=()=>{
     return(
-        <div className="flex flex-col h-[92vh]  w-screen relative" id="home">
+        <div className="flex flex-col md:h-[92vh] h-[400px] w-screen relative" id="home">
                <Carousel
                dataLength={banners?.length}
                RenderedItem={banners?.map((item)=>{
@@ -60,17 +60,17 @@ export const BannerHome=()=>{
                 })}
                />
                 <div className='absolute w-full h-full'>   
-                    <div className='w-full h-full home-banner-container z-4 relative p-10'>
+                    <div className='w-full h-full home-banner-container z-4 relative md:p-10 p-5'>
                         <div className='flex items-center gap-5'>
                             <div className='w-14 h-14 relative rounded-full border-dashed border-white border-1'  >
                                     <Image src={'/aqsa_logo.jpg'} alt="aqsa_logo"  fill  className='rounded-full'/>
                             </div>
                             <div className='flex flex-col gap-2'>
-                                <h1 className='text-3xl font-semibold'>AQSA ACADEMY OF EXCELLENCE</h1>
+                                <h1 className='md:text-3xl text-2xl font-semibold'>AQSA ACADEMY OF EXCELLENCE</h1>
                                 <small className='text-sm'> An Institute of Eminence ( for Girls Students )</small>
                             </div>
 
-                            <div className="flex flex-col self-end ml-auto gap-2">
+                            <div className="hidden flex-col self-end ml-auto gap-2 md:flex">
                                 <div className="flex items-center gap-3">
                                     <FaMapMarkerAlt size={30}/>
                                      <span className="text-yellow-400 text-xl"

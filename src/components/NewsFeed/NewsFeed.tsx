@@ -28,9 +28,9 @@ export const NewsFeed=async()=>{
     const res=await fetch(`${process.env.NEXTAUTH_URL}/api/notice`);
     const newsFeed=await res.json();
     return(
-        <div className="text-gray-500 mt-30 px-30 gap-10 flex flex-col" id="news">
+        <div className="text-gray-500 mt-30 px-5 gap-5 flex flex-col md:px-30 md:gap-10" id="news">
             <Title>NOTICE & IMPORTANT LINKS</Title>
-            <div className="grid grid-cols-2 flex-col gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 flex-col gap-5">
                 {newsFeed?.map((item:NewsDTO,index:number)=>{
                     const format=item?.date?.split('-');
                     const day=format?.[2];

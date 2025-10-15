@@ -43,7 +43,7 @@ export default function NewStudentRegistration  ({
    
   return (
      <Modal
-          width='40vw'
+          width={window.innerWidth>768?'40vw':'95vw'}
           title={'Online Admission'}
           open={open}
           onCancel={()=>{setOpen(false)}}

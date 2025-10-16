@@ -132,7 +132,7 @@ export async function POST(req:NextRequest){
 
                     //superbase uploads
 
-                    const file = formData.get("file") as File;
+                    const file = formData.get("markSheet") as File;
                     let fileUrl='';
                     if(file?.name){
                     const fileName = `${Date.now()}_${file.name}`;
@@ -149,7 +149,7 @@ export async function POST(req:NextRequest){
                     fileUrl = signed?.signedUrl||'';
                     if (error) throw error;
                     }
-
+                    console.log("fileUrl", fileUrl)
                     await NewStudentRegistration.create({
                     ...regData,
                     marksSheet: fileUrl, // Store relative path

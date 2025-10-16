@@ -58,7 +58,7 @@ export function HiddenInvoice({ targetRef, data, totalDues }:
               })}
               
           </div>
-          <h2 className="text-xl mt-2 mx-10">Total Payable Amount: <span className="font-semibold">{totalDues}</span></h2>
+          <h2 className="text-xl mb-2 mx-10">Total Payable Amount: <span className="font-semibold">{totalDues}</span></h2>
     </div>
   );
 }

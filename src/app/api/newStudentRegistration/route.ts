@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import NewStudentRegistration from "../../../../models/newStudentRegistration";
-import path from "path";
-import { mkdir, writeFile } from "fs/promises";
+// import path from "path";
+// import { mkdir, writeFile } from "fs/promises";
 import { connectToDatabase } from "../../../../lib/mongoose";
 import Students from "../../../../models/students";
+import { supabase } from "../../../../lib/superbase";
 
 
 type RegData={
@@ -110,22 +111,50 @@ export async function POST(req:NextRequest){
                         status:409
                     })
                     };
-                    const file=formData.get('markSheet') as File;
-                    const uploadDir=path.join(process.cwd(),'public','uploads');
-                    await mkdir(uploadDir, {recursive:true});
+
+                    //local uploads
+                    // const file=formData.get('markSheet') as File;
+                    // const uploadDir=path.join(process.cwd(),'public','uploads');
+                    // await mkdir(uploadDir, {recursive:true});
+                    // let fileUrl='';
+                    // if(file.name){
+                    //     const fileName=`${Date.now()}_${file.name}`;
+                    //     const filePath=path.join(uploadDir, fileName);
+                    //     const buffer=Buffer.from(await file.arrayBuffer());
+                    //     await writeFile(filePath, buffer);
+                    //     fileUrl=`/uploads/${fileName}`;
+                    // }
+                    // console.log("fileUrl",fileUrl)
+                    // await NewStudentRegistration.create({
+                    //     ...regData,
+                    //     marksSheet:fileUrl,
+                    // });
+
+                    //superbase uploads
+
+                    const file = formData.get("file") as File;
                     let fileUrl='';
-                    if(file.name){
-                        const fileName=`${Date.now()}_${file.name}`;
-                        const filePath=path.join(uploadDir, fileName);
-                        const buffer=Buffer.from(await file.arrayBuffer());
-                        await writeFile(filePath, buffer);
-                        fileUrl=`/uploads/${fileName}`;
-                    }
-                    console.log("fileUrl",fileUrl)
-                    await NewStudentRegistration.create({
-                        ...regData,
-                        marksSheet:fileUrl,
+                    if(file?.name){
+                    const fileName = `${Date.now()}_${file.name}`;
+                    const { error } = await supabase.storage
+                    .from("aqsa_upload") // bucket name
+                    .upload(fileName, file, {
+                        cacheControl: "3600",
+                        upsert: false,
                     });
+
+                    const { data: signed } = await supabase.storage
+                    .from("aqsa_upload")
+                    .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year
+                    fileUrl = signed?.signedUrl||'';
+                    if (error) throw error;
+                    }
+
+                    await NewStudentRegistration.create({
+                    ...regData,
+                    marksSheet: fileUrl, // Store relative path
+                    });
+
                     return NextResponse.json({
                         message:"New Student registration done successfully",
                     },

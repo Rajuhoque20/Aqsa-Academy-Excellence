@@ -5,6 +5,7 @@ import Link from "next/link"
 import  './Home.css'
 import { TabCard } from "./TabCard"
 import { FaNewspaper, FaStar, FaUserGraduate, FaMapMarkerAlt  } from "react-icons/fa";
+import { instituteInfo } from "src/constant"
 
 const banners=[
     {
@@ -63,11 +64,11 @@ export const BannerHome=()=>{
                     <div className='w-full h-full home-banner-container z-4 relative md:p-10 p-5'>
                         <div className='flex items-center gap-5'>
                             <div className='w-14 h-14 relative rounded-full border-dashed border-white border-1'  >
-                                    <Image src={'/aqsa_logo.jpg'} alt="aqsa_logo"  fill  className='rounded-full'/>
+                                    <Image src={instituteInfo.logo} alt="aqsa_logo"  fill  className='rounded-full'/>
                             </div>
                             <div className='flex flex-col gap-2'>
-                                <h1 className='md:text-3xl text-2xl font-semibold'>AQSA ACADEMY OF EXCELLENCE</h1>
-                                <small className='text-sm'> An Institute of Eminence ( for Girls Students )</small>
+                                <h1 className='md:text-3xl text-2xl font-semibold'>{instituteInfo.name}</h1>
+                                <small className='text-sm'> {instituteInfo.suit}</small>
                             </div>
 
                             <div className="hidden flex-col self-end ml-auto gap-2 md:flex">
@@ -79,7 +80,7 @@ export const BannerHome=()=>{
                                 </div>                              
                                 <span className="text-green-200"
                                   style={{ textShadow: "2px 4px 8px rgba(0,0,0,0.8)" }}
-                                >Takagach, Cooch Behar-736145</span>
+                                >{instituteInfo.location}</span>
                                 
                                 <Link style={{ textShadow: "2px 4px 8px rgba(0,0,0,0.8)" }} className="text-blue-500 underline decoration-dotted hover:scale-110 transition" href='https://www.google.com/maps/place/Cooch+Behar+Rajbari+Park/@26.3281508,89.4361229,17z/data=!3m1!4b1!4m6!3m5!1s0x39e2fe811fc784f1:0xd8ba085180bfd037!8m2!3d26.328146!4d89.4386978!16s%2Fg%2F11fx8gllz6?entry=ttu&g_ep=EgoyMDI1MDcxNi4wIKXMDSoASAFQAw%3D%3D'>View Map</Link>
                             </div>

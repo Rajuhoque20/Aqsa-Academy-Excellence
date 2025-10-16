@@ -2,6 +2,9 @@
 import React from 'react'
 import LoginButton from './LoginButton';
 import { useAlarmStore } from 'src/store/alarmStore';
+import { Button } from '../Button';
+import Notification from '../Notification/Notifcation';
+import { instituteInfo } from 'src/constant';
 
 const footerData=[
   {
@@ -59,22 +62,22 @@ const footerData=[
     data:[
       {
         id:1,
-        title:"+91 7045678432",
+        title:instituteInfo.phone,
         url:null,
       },
       {
         id:2,
-        title:"Al Aqsa Mission",
+        title:instituteInfo.name,
         url:null
       },
       {
         id:3,
-        title:"Takagach, Cooch Behar-706145",
+        title:instituteInfo.location,
         url:null,
       },
       {
         id:4,
-        title:"https://www.alaqsaacademy.com",
+        title:instituteInfo.websiteURL,
         url:null,
       },
     ]
@@ -82,7 +85,12 @@ const footerData=[
 ];
 
 export default function Footer() {
-  const {handleEnable}=useAlarmStore()
+  const {handleEnable}=useAlarmStore();
+
+  const handleEnableButton=()=>{
+    handleEnable();
+    Notification.success("Alarm bell is enabled.")
+  }
     
   return (
     <div className='h-max flex flex-col md:flex-row items-center justify-between bg-gray-800 p-5 gap-5 md:p-20'>
@@ -99,12 +107,18 @@ export default function Footer() {
             </div>
           )
         })}
-         <button
+         {/* <button
             className="px-5 py-3 cursor-pointer h-max bg-blue-600 text-white rounded-lg self-center"
             onClick={handleEnable}
           >
             🔔 Enable Bell Allarm
-          </button>
+          </button> */}
+          <div className='self-center'>
+              <Button type='primary'
+              onClick={handleEnableButton}
+              title={"🔔 Enable Bell Allarm"}
+              />
+          </div>
       </div>
       <LoginButton/>
 

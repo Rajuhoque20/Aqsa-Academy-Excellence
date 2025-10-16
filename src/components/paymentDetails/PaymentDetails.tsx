@@ -104,13 +104,18 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
   }
 }
 
+const totalDues = paymentDatails?.reduce(
+  (total, item:PaymentDTO) => total + Number(item?.due_fees ?? 0),
+  0
+) ?? 0;
+
   return(
     <>
      <div className="flex items-center justify-between">
              <h2 className="text-xl mt-7 mb-3">Payment Details</h2>
               
               <div className="gap-5 items-center flex">
-                {downloadData?.length>0&&<Button title="Download" type="secondary"  onClick={() =>{
+                {downloadData?.length>0&&<Button title="Download ⬇️" type="secondary"  onClick={() =>{
                 setTimeout(() => {
                 toPDF();
               }, 100);}}/>}
@@ -209,7 +214,7 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
           {open&&<AddPayment open={open} type={"add"}  setOpen={setOpen} handleSubmit={handleSubmit} editParam={null}/>}
           {isEdit&&<AddPayment open={isEdit} type='edit' setOpen={setIsEdit} handleSubmit={handleSubmit} editParam={editParam}/>}
           <DeletePayment open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} deleteHandler={deleteHandler}/>
-            <HiddenInvoice targetRef={targetRef} data={downloadData}/>
+            <HiddenInvoice targetRef={targetRef} data={downloadData} totalDues={totalDues}/>
         </>
   )
 }

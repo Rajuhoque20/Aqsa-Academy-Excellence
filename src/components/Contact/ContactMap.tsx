@@ -1,5 +1,6 @@
 
 import { FaPhone, FaEnvelope, } from "react-icons/fa";
+import { instituteInfo } from "src/constant";
  export default function ContactMap(){
     return(
          <div className="relative md:w-2/3 w-full transition hover:scale-105 "> 
@@ -7,11 +8,11 @@ import { FaPhone, FaEnvelope, } from "react-icons/fa";
                     <h2 className="font-semibold">Contact:</h2>
                     <div className="flex items-center gap-3">
                         <FaPhone size={20}/>
-                         <p>7047082113</p>
+                         <p>{instituteInfo.phone}</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <FaEnvelope size={20}/>
-                        <p>aqsa.academy@gmail.com</p>
+                        <p>{instituteInfo.email}</p>
                     </div>                                                                      
                 </div>                   
                 <iframe

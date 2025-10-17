@@ -7,6 +7,8 @@ import { usePDF } from "react-to-pdf";
 import { HiddenInvoice } from "./downloadTemplate";
 import CheckBox from "../Checkbox/Checkbox";
 import { dateMonthString } from "src/utility/dateToMonth";
+import { ConfirmModal } from "../confirmModal/ConfirmModal";
+import { ErrorMessage } from "src/utility/errorMessage";
 const AddPayment =React.lazy(()=>import("src/components/AddPayment/addPayment")); 
 const DeletePayment =React.lazy(()=>import("src/components/DeletePayment/deletePayment"));
 const columns=["Payment for","Monthly Fees",'Pay Date', "Paid Amount", "Due", "Action",];
@@ -30,6 +32,7 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
     const [deleteParam, setDeleteParam]=useState<DeleteDTO|null>(null);
     const [editParam, setEditParam]=useState<PaymentDTO|null>(null);
     const [open, setOpen]=useState<boolean>(false);
+    const [clearDueModal, setClearDueModal]=useState(false);
     const [paymentDatails, setPaymentDetails]=useState([]);
     const [loading, setLoading]=useState(true);
     const [downloadData,setDownloadData]=useState<PaymentDTO[]>([]);
@@ -104,6 +107,29 @@ export default function PaymentDetails({ endPoint, idParam}:{idParam?:{[key:stri
   }
 }
 
+const handleClearDues=async()=>{
+  setLoading(true);
+  const paymentIds=downloadData?.map(item=>item._id);
+  const method='patch';
+            const url=`/api/${endPoint}/${id}`;
+            const data=paymentIds; 
+            const message=`Dues have been cleared`;        
+            try{
+                 await axios({method, url,data});
+                 getPayments();
+                Notification.success(message);
+            }
+            catch(err){
+                console.log(err);         
+                ErrorMessage(err);
+            }
+            finally{
+              setLoading(false);
+              setClearDueModal(false);
+               setDownloadData([]);
+            }   
+}
+
 const totalDues = paymentDatails?.reduce(
   (total, item:PaymentDTO) => total + Number(item?.due_fees ?? 0),
   0
@@ -115,6 +141,7 @@ const totalDues = paymentDatails?.reduce(
              <h2 className="text-xl mt-7 mb-3">Payment Details</h2>
               
               <div className="gap-5 items-center flex">
+                 {downloadData?.length>0&&<Button type="primary" title="Clear Dues ❌" onClick={()=>setClearDueModal(true)}/>}
                 {downloadData?.length>0&&<Button title="Download ⬇️" type="secondary"  onClick={() =>{
                 setTimeout(() => {
                 toPDF();
@@ -133,7 +160,7 @@ const totalDues = paymentDatails?.reduce(
                       {index===0?
                         
                           <div className='flex item-center gap-5'>
-                            <CheckBox checked={downloadData.length===paymentDatails.length} onChange={(e)=>{
+                            <CheckBox checked={downloadData?.length>0&&downloadData.length===paymentDatails.length} onChange={(e)=>{
                               
                               if(e.target.checked){
                                 setDownloadData(paymentDatails);
@@ -215,6 +242,16 @@ const totalDues = paymentDatails?.reduce(
           {isEdit&&<AddPayment open={isEdit} type='edit' setOpen={setIsEdit} handleSubmit={handleSubmit} editParam={editParam}/>}
           <DeletePayment open={isDelete} setOpen={setIsDelete} deleteParam={deleteParam} deleteHandler={deleteHandler}/>
             <HiddenInvoice targetRef={targetRef} data={downloadData} totalDues={totalDues}/>
+          <ConfirmModal
+          title="Clear Dues"
+          open={clearDueModal}
+          onConfirm={handleClearDues}
+          setOpen={setClearDueModal}
+          loading={loading}
+          >
+            <p className="text-gray-800 self-center">You are sure, you want to clear dues for  the seleted months?</p>
+
+          </ConfirmModal>
         </>
   )
 }

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState, use } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import { PaymentContextProvider } from "src/Context/PaymentContent";
  const PaymentDetails =React.lazy(()=>import("src/components/paymentDetails/PaymentDetails"));
 
 type StudentDTO={
@@ -20,6 +21,9 @@ type StudentDTO={
     father_name:string,
     mother_name:string
 }
+
+
+
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params); // ✅ unwrap params
   const [studentDetails, setStudentDetails] = useState<StudentDTO>();
@@ -69,8 +73,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             <span> Mother&apos;s Name:</span>
             <span>{studentDetails?.mother_name}</span>
           </div>    
-        </div>      
+        </div> 
+        <PaymentContextProvider monthly_fees={Number(studentDetails?.monthly_fees??0)}>   
         <PaymentDetails idParam={{studentId:id}} endPoint="studentPayment"/>
+        </PaymentContextProvider> 
       </div>
    );
 }

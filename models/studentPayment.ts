@@ -1,6 +1,7 @@
 import mongoose, { model, models } from "mongoose";
 
-const studentSchema=new mongoose.Schema({
+
+const studentPaymentSchema=new mongoose.Schema({
     studentId:{
         type:String,
         required:true,
@@ -8,6 +9,7 @@ const studentSchema=new mongoose.Schema({
     pay_month:{
         type:String,
         required:true,
+        unique:true,
     },
     monthly_fees:{
         type:String,
@@ -30,5 +32,7 @@ const studentSchema=new mongoose.Schema({
     timestamps:true
 })
 
-const StudentPayment=models.StudentPayment||model("StudentPayment",studentSchema);
+
+
+const StudentPayment=models.StudentPayment||model("StudentPayment",studentPaymentSchema);
 export default StudentPayment;

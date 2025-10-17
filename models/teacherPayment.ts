@@ -1,6 +1,6 @@
 import mongoose, { model, models } from "mongoose";
 
-const teacherSchema=new mongoose.Schema({
+const teacherPaymentSchema=new mongoose.Schema({
     teacherId:{
         type:String,
         required:true,
@@ -8,6 +8,7 @@ const teacherSchema=new mongoose.Schema({
     pay_month:{
         type:String,
         required:true,
+        unique:true,
     },
     monthly_fees:{
         type:String,
@@ -28,7 +29,9 @@ const teacherSchema=new mongoose.Schema({
 
 },{
     timestamps:true
-})
+});
 
-const TeacherPayment=models.TeacherPayment||model("TeacherPayment",teacherSchema);
+
+
+const TeacherPayment=models.TeacherPayment||model("TeacherPayment",teacherPaymentSchema);
 export default TeacherPayment;

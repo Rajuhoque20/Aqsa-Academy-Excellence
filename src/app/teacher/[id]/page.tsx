@@ -3,14 +3,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState, use } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import { PaymentContextProvider } from "src/Context/PaymentContent";
  const PaymentDetails=React.lazy(()=>import("src/components/paymentDetails/PaymentDetails"))
 
 type TeacherDTO={
     _id?:string,
     pay_month:string,
-    monthly_fees:string,
+    monthly_salary:string,
     paid_amount:string,
-    due_fees:string,
+    dueFees:string,
     pay_date:string,
     name:string,
     gender:string,
@@ -20,6 +21,7 @@ type TeacherDTO={
     father_name:string,
     mother_name:string
 }
+
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params); // ✅ unwrap params
@@ -38,6 +40,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       });
   }, [id]);
 
+  console.log("teacherDetails",teacherDetails)
   return (
       <div>
         <div className="flex items-center gap-3">
@@ -70,8 +73,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             <span> Mother&apos;s Name:</span>
             <span>{teacherDetails?.mother_name}</span>
           </div>    
-        </div>        
-        <PaymentDetails idParam={{teacherId:id}} endPoint="teacherPayment"/>
+        </div> 
+        <PaymentContextProvider monthly_fees={Number(teacherDetails?.monthly_salary??0)}>
+          <PaymentDetails idParam={{teacherId:id}} endPoint="teacherPayment"/>
+        </PaymentContextProvider>         
       </div>
    );
 }

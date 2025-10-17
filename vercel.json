@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/studentPayment/generate-monthly-payments",
+      "schedule": "10 2 18 * *"
+    },
+    {
+      "path": "/api/teacherPayment/generate-monthly-payments",
+      "schedule": "10 2 18 * *"
+    }
+  ]
+}

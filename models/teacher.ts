@@ -25,7 +25,7 @@ const teacherSchema=new mongoose.Schema({
         required:true,
     },
 });
-teacherSchema.index({email:1},{unique:true})
+
 
 const Teacher=models.Teacher||model("Teacher",teacherSchema);
 export default Teacher;

@@ -56,6 +56,6 @@ const studentSchema=new mongoose.Schema({
 {
     timestamps:true
 });
-studentSchema.index({ email: 1 }, { unique: true });
+
 const Students=models.Student||model('Student', studentSchema);
 export default Students;

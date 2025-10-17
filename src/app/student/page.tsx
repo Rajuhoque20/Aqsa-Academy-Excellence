@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchInput } from 'src/components/SearchInput';
 const AddStudentModal= React.lazy(()=>import('./AddStudent'));
-import { AddButton, Button, DeleteButton, EditButton } from 'src/components/Button';
+import { AddButton, DeleteButton, EditButton } from 'src/components/Button';
 const DeleteStudent =React.lazy(()=>import('./DeleteStudent'));
 import axios from 'axios';
 import { useRouter } from "next/navigation";
@@ -72,9 +72,7 @@ export default function Student() {
         debounceFetch(value);
     };
 
-    const handleFetchCMFS=()=>{
-
-    }
+   
     const filteredData=selectClass==='All'? searchData:searchData?.filter((item:StudentDTO)=>item.current_class ===selectClass)
 
 
@@ -84,7 +82,7 @@ export default function Student() {
          <h1 className='text-2xl font-semibold text-white'>Students</h1>
          <div className='flex items-center gap-5'>
               <div className="flex items-center gap-3">
-                <Button type='primary'  title="Fetch CMFS" onClick={handleFetchCMFS}/>
+               
                     <label className="text-gray-400 font-semibold ml-3" htmlFor="phone">Class:</label>
                     <select required name="gender"
                     defaultValue={'All'}

@@ -11,7 +11,7 @@ export async function GET() {
 
     const currentDate = new Date();
     const pay_month = currentDate.toISOString().slice(0, 7); // e.g. "2025-10"
-    const pay_date = currentDate.toISOString().split("T")[0];
+    // const pay_date = currentDate.toISOString().split("T")[0];
 
     // 📝 Step 1: Get existing student IDs who already have payments for this month
     const existingPayments = await StudentPayment.find({ pay_month }).select("studentId");
@@ -33,7 +33,7 @@ export async function GET() {
     const payments = students.map((s) => ({
       studentId: s._id,
       pay_month,
-      pay_date,
+      pay_date:'',
       due_fees: s.monthly_fees,
       paid_amount: 0,
       monthly_fees: s.monthly_fees,
